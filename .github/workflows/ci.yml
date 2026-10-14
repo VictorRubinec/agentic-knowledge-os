@@ -1,0 +1,33 @@
+name: Knowledge OS Health & Lint CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+
+      - name: Run Frontmatter Linter
+        run: python scripts/validar_frontmatter.py
+
+      - name: Run Broken Links Validator
+        run: python scripts/validar_links.py
+
+      - name: Test PDF Compilation Engine (Check-Only)
+        run: python scripts/gerar_pdf.py --dir exemplos --check-only

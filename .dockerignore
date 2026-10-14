@@ -1,0 +1,17 @@
+node_modules
+__pycache__
+*.pyc
+.pytest_cache
+.git
+.github
+*.log
+scratch_*
+temp_*
+tests/output_pdf/
+.playwright-cli/
+*.db
+.env*
+*credentials*.json
+*credencials*.json
+token.json
+scripts/token.json

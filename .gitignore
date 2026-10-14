@@ -1,0 +1,39 @@
+# Ambientes virtuais Python
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+
+# Node / JS
+node_modules/
+.npm/
+
+# Playwright & Testes
+.playwright/
+ms-playwright/
+.pytest_cache/
+test-results/
+
+# Segredos, Chaves e Credenciais (Blindagem de Segurança)
+.env
+.env.*
+*.local
+credentials*.json
+token*.json
+*secret*
+*.pem
+*.key
+
+# Caches de IDEs e Agentes de IA
+.cursor/
+.antigravity/
+.claude/
+.gemini/
+scratch/
+
+# Build & PDFs Temporários
+dist/
+build/
+output_pdf/

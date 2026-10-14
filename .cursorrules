@@ -1,0 +1,8 @@
+# Regras para Agentes de IA (Cursor / Antigravity / Claude Code)
+
+- Leia atentamente o arquivo AGENTS.md para todas as instruções operacionais.
+- Linha do Tempo Única: Nunca crie múltiplos arquivos sobre o mesmo tema. Atualize o arquivo existente na seção '## Linha do Tempo'.
+- Formato MDX Visual: Utilize componentes visuais (<Timeline />, <Callout />, <Badge />) para organizar informações.
+- Diagramas Mermaid: Sempre coloque rótulos entre aspas duplas, evite tags HTML <b> e nunca gere árvores horizontais muito largas.
+- Motor de PDF: Use estritamente 'python scripts/gerar_pdf.py <arquivo.mdx>' para compilar relatórios.
+- Mantenha MEMORY.md e ORGANIZATION.md atualizados a cada nova entrega.
