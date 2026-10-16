@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ata Executiva: Definição de Arquitetura de Microsserviços e Event-Driven — Documentação Técnica</title>
+  <!-- Tailwind CSS com plugin de Tipografia via CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <!-- Mermaid.js para diagramas nativos -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- KaTeX para fórmulas matemáticas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      line-height: 1.65;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Tipografia e Hierarquia do Conteúdo */
+    main h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.025em;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    main h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    main h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+    main h4 {
+      font-size: 1.0rem;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 1.25rem;
+      margin-bottom: 0.35rem;
+    }
+    main p {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: #334155;
+      line-height: 1.7;
+    }
+    main ul:not(.custom-list) {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    main ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    main li {
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
+      color: #334155;
+    }
+    main hr {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      border: 0;
+      border-top: 1px solid #e2e8f0;
+    }
+    main code:not(pre code) {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+      font-size: 0.85em;
+      font-weight: 500;
+      border: 1px solid #e2e8f0;
+    }
+    main a {
+      color: #0284c7;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 500;
+    }
+    main a:hover {
+      color: #0369a1;
+    }
+
+    /* Checkboxes de Tarefas e Remoção de Marcadores Duplicados */
+    main ul:has(.task-checkbox), main ul.list-none, main ul.custom-list {
+      list-style-type: none !important;
+      padding-left: 0.25rem !important;
+    }
+    main li:has(> .task-checkbox) {
+      list-style-type: none !important;
+      display: flex;
+      align-items: flex-start;
+      margin-top: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .task-checkbox {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      line-height: 1;
+      margin-right: 0.5rem;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .task-checkbox.checked {
+      color: #10b981;
+    }
+    .task-checkbox.unchecked {
+      color: #94a3b8;
+    }
+
+    /* Componentes Semânticos */
+    .callout {
+      border-left-width: 4px;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .callout-info { background-color: #f0f9ff; border-color: #0284c7; color: #0c4a6e; }
+    .callout-warn { background-color: #fffbeb; border-color: #f59e0b; color: #78350f; }
+    .callout-danger { background-color: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #14532d; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      border-left: 2px solid #e2e8f0;
+      margin-left: 12px;
+      padding-left: 24px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -31px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #0284c7;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 0 2px #0284c7;
+    }
+
+    /* Diagramas Mermaid Otimizados */
+    .mermaid-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 28px 0;
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px 16px;
+      overflow-x: auto;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+    .mermaid .node rect, .mermaid .node polygon {
+      stroke-width: 2px !important;
+      rx: 8px !important;
+      ry: 8px !important;
+    }
+    .mermaid .label {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      line-height: 1.4 !important;
+    }
+    .mermaid .edgeLabel {
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      background: #ffffff !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* Estilização de Tabelas */
+    table {
+      width: 100%;
+      margin: 24px 0;
+      border-collapse: collapse;
+      font-size: 0.9em;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid #e2e8f0;
+      color: #334155;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+    }
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Regras de Impressão e PDF */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 14mm 14mm 16mm 14mm;
+      }
+
+      body {
+        background-color: #ffffff !important;
+        font-size: 9.5pt;
+        color: #0f172a !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .document-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      h1, h2, h3, h4, .header-cover {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      .avoid-break, .callout, .card, .timeline-item, table, .mermaid-wrapper {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .page-break {
+        page-break-before: always;
+        break-before: always;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Container Principal Fluido (Estilo Web / Documento Natural) -->
+  <div class="document-container max-w-4xl mx-auto px-6 py-8 sm:px-12 sm:py-12">
+    <!-- Header Cover Corporativo -->
+    <header class="header-cover border-b border-slate-200 pb-8 mb-8">
+      <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+        <span class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+          Exemplos
+        </span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          CONCLUIDO
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+        Ata Executiva: Definição de Arquitetura de Microsserviços e Event-Driven
+      </h1>
+
+      <!-- Grade de Metadados -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200/80 text-xs mt-6">
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Data de Atualização</span>
+          <span class="font-semibold text-slate-800 text-sm">2026-10-14</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Autor / Responsável</span>
+          <span class="font-semibold text-slate-800 text-sm">Victor Rubinec</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Cliente / Contexto</span>
+          <span class="font-semibold text-slate-800 text-sm">Knowledge OS</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Versão</span>
+          <span class="font-semibold text-slate-800 text-sm">v2.0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="space-y-6 text-base text-slate-700 leading-relaxed">
+      <div class="flex flex-wrap gap-2 my-3"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/80">Arquitetura de Software</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200/80">Status: Aprovado</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/80">Nível: Executivo & Técnico</span></div>
+
+<h2>1. Visão Geral &amp; Contexto</h2>
+<p>Esta ata consolida as deliberações do comitê de engenharia para a modernização do ecossistema legado, migrando de uma arquitetura síncrona acoplada para um modelo <strong>Event-Driven assíncrono</strong> com isolamento estrito de dados e garantias de idempotência.</p>
+<div class="callout callout-success"><strong class="block font-semibold mb-1">Decisão Chave de Arquitetura</strong><div class="text-sm opacity-90"><p>Ficou acordada a adoção de mensageria baseada em eventos via Apache Kafka / Redis Streams para operações de escrita de alto volume, mantendo consultas críticas via APIs REST com cache em memória.</p></div></div>
+
+<hr />
+<h2>2. Mapa do Fluxo de Informação (Arquitetura Proposta)</h2>
+<p>O fluxo abaixo demonstra a segregação de responsabilidades entre ingestão, validação e persistência:</p>
+
+<div class="mermaid-wrapper">
+  <pre class="mermaid">
+flowchart LR
+    A["Cliente / Front-End<br/>Next.js 14"] -->|"HTTPS / JSON"| B["API Gateway<br/>FastAPI Autenticado"]
+    B -->|"Publicação de Evento"| C["Mensageria<br/>Redis Streams / Kafka"]
+    C -->|"Consumo Assíncrono"| D["Workers de Processamento<br/>Python Assíncrono"]
+    D -->|"Persistência Idempotente"| E[("PostgreSQL<br/>Schemas Multi-Tenant")]
+
+    style A fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style B fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#fff
+    style C fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#fff
+    style D fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
+    style E fill:#0f172a,stroke:#64748b,stroke-width:2px,color:#fff
+  </pre>
+</div>
+
+<hr />
+<h2>3. Deliberações e Próximos Passos</h2>
+<ol>
+<li><strong>Garantia de Idempotência</strong>: Todo payload de evento conterá um <code>idempotency_key</code> (UUIDv7) validado na camada de ingestão.</li>
+<li><strong>Observabilidade Unificada</strong>: Tracing distribuído instrumentado via OpenTelemetry em todos os serviços.</li>
+<li><strong>Plano de Rollout</strong>: Fase piloto de 14 dias com 5% da carga total em ambiente de homologação.</li>
+</ol>
+<hr />
+<h2>Linha do Tempo</h2>
+<div class="timeline mt-6">
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm">2026-10-14</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">Aprovado</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Reunião de Alinhamento e Aprovação</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Apresentação da POC, validação de volumetria e aprovação formal pelos Tech Leads.</p>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm">2026-10-08</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">Rascunho</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Elaboração do RFC Inicial</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Redação do documento de arquitetura e levantamento de gargalos de rede.</p>
+  </div>
+</div>
+
+<hr />
+<h2>Assuntos Relacionados</h2>
+<ul>
+<li><a href="02-tarefa-autenticacao-jwt.mdx"><code>02-tarefa-autenticacao-jwt.mdx</code></a> — Implementação do módulo de autenticação e tokens do Gateway.</li>
+</ul>
+    </main>
+
+    <!-- Rodapé Corporativo -->
+    <footer class="mt-16 pt-6 border-t border-slate-200 flex justify-between items-center text-xs text-slate-400">
+      <span>Agentic Knowledge OS • Artefato de Documentação Técnica</span>
+      <span>Exemplos</span>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Inicializar Mermaid
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'base',
+          themeVariables: {
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontSize: '14px',
+            primaryColor: '#f0f9ff',
+            primaryBorderColor: '#0284c7',
+            primaryTextColor: '#0c4a6e',
+            lineColor: '#64748b',
+            secondaryColor: '#f8fafc',
+            tertiaryColor: '#ffffff',
+            edgeLabelBackground: '#ffffff',
+            clusterBkg: '#f8fafc',
+            clusterBorder: '#cbd5e1'
+          },
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+            nodeSpacing: 45,
+            rankSpacing: 50,
+            padding: 20
+          },
+          securityLevel: 'loose'
+        });
+      }
+
+      // Inicializar KaTeX apenas para fórmulas explícitas
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError : false
+        });
+      }
+    });
+  </script>
+</body>
+</html>

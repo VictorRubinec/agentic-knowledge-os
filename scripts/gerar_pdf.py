@@ -68,7 +68,25 @@ def log_error(msg):
 # =============================================================================
 THEMES = {
     "corporate": {
+        "brand_name": "DOCUMENTAÇÃO TÉCNICA // PRODUTO & TECH",
+        "primary_color": "#0284c7",
+        "primary_dark": "#0f172a",
+        "accent_color": "#38bdf8",
+        "bg_meta": "#f8fafc",
+        "font_family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    },
+    "studio_kustom": {
+        "brand_name": "STUDIO KUSTOM // DESIGN & PRINT",
+        "brand_sub": "Personalizados, Colecionáveis & TCG",
+        "primary_color": "#7c3aed",
+        "primary_dark": "#18181b",
+        "accent_color": "#a855f7",
+        "bg_meta": "#faf5ff",
+        "font_family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    },
+    "triade": {
         "brand_name": "TRÍADE // PRODUTO & TECH",
+        "brand_sub": "Governança & Negócios",
         "primary_color": "#0284c7",
         "primary_dark": "#0f172a",
         "accent_color": "#38bdf8",
@@ -199,6 +217,40 @@ class MDXValidator:
                     "Pode gerar quebras de página artificiais (> 350px). Verifique a diagramação."
                 )
 
+            # 5. Checar rótulos longos sem quebras de linha (<br/>)
+            node_labels = re.findall(r'\["([^"]+)"\]', block)
+            for label in node_labels:
+                parts = label.split('<br/>')
+                for p in parts:
+                    if len(p.strip()) > 35:
+                        self.warnings.append(
+                            f"Mermaid bloco #{idx}: rótulo contém texto muito longo sem quebra (`{p.strip()[:30]}...`). "
+                            "Isso expande o viewBox e encolhe as letras no PDF. Adicione `<br/>` para quebrar."
+                        )
+                        break
+
+            # 6. Checar cadeias horizontais excessivas no modo LR (4 ou mais conexões)
+            if "flowchart lr" in block.lower() or "graph lr" in block.lower():
+                arrows = len(re.findall(r'-->|==>|-.->', block))
+                if arrows >= 4:
+                    self.warnings.append(
+                        f"Mermaid bloco #{idx}: fluxo horizontal LR possui {arrows} conexões sequenciais. "
+                        "Isso cria fitas ultra-largas com letras microscópicas. Converta para `flowchart TD` ou divida em etapas."
+                    )
+
+            # 7. Checar mensagens de SequenceDiagram sem quebras
+            if "sequencediagram" in block.lower():
+                seq_lines = block.splitlines()
+                for s_line in seq_lines:
+                    if ("->>" in s_line or "-->>" in s_line) and ":" in s_line:
+                        msg = s_line.split(":", 1)[1].strip()
+                        if len(msg) > 50 and "<br/>" not in msg:
+                            self.warnings.append(
+                                f"Mermaid bloco #{idx}: mensagem de sequência muito longa sem `<br/>`: `{msg[:35]}...`. "
+                                "Isso afasta os participantes e reduz a fonte. Use `<br/>` para quebrar."
+                            )
+                            break
+
     def _check_currency_symbols(self):
         # Verifica se há múltiplos $ soltos no mesmo parágrafo que não sejam R$ ou R\$
         lines = self.raw_content.splitlines()
@@ -275,6 +327,9 @@ def format_category_display(category: str) -> str:
         "trabalho/sites": "Desenvolvimento Web",
         "rpg/sistemas/ordem-2": "Sistema Ordem 2",
         "rpg/sistemas/ordem-paranormal": "Ordem Paranormal RPG",
+        "studio-kustom/01-negocio-e-operacao": "Studio Kustom — Negócio & Produção",
+        "studio-kustom/02-engine-e-arquitetura": "Studio Kustom — Engine & Arquitetura",
+        "studio-kustom/03-agente-ia-e-governanca": "Studio Kustom — IA & Governança",
         "studio-kustom": "Studio Kustom",
     }
 
@@ -296,9 +351,10 @@ def format_category_display(category: str) -> str:
 class MDXProcessor:
     """Sanitiza e transforma MDX em HTML de alta fidelidade para PDF."""
 
-    def __init__(self, raw_content: str, theme_name: str = "corporate"):
+    def __init__(self, raw_content: str, theme_name: str = "corporate", file_path: Path = None):
         self.content = raw_content
         self.theme_name = theme_name
+        self.file_path = file_path
         self.theme = THEMES.get(theme_name, THEMES["corporate"])
         self.metadata = {
             "title": "Documento Técnico",
@@ -363,17 +419,25 @@ class MDXProcessor:
                         self.theme = THEMES[val]
             self.content = self.content[fm_match.end():]
 
-        # Auto-detecção de tema caso esteja no padrão 'corporate'
+        # Auto-detecção de tema baseada em metadados e caminho de arquivo
         if self.theme_name == "corporate":
             cat_lower = self.metadata.get("category", "").lower()
             layout_val = str(self.metadata.get("layout", "")).lower()
-            if "somos1" in cat_lower or "tattoo" in cat_lower:
+            fp_lower = str(self.file_path).lower().replace("\\", "/") if self.file_path else ""
+
+            if "studio-kustom" in cat_lower or "kustom" in cat_lower or "studio-kustom" in fp_lower:
+                self.theme_name = "studio_kustom"
+                self.theme = THEMES["studio_kustom"]
+            elif "somos1" in cat_lower or "tattoo" in cat_lower or "somos1" in fp_lower:
                 self.theme_name = "somos1"
                 self.theme = THEMES["somos1"]
-            elif "join4" in cat_lower or "atlantica" in cat_lower:
+            elif "triade" in cat_lower or "tríade" in cat_lower or "trabalho/triade" in fp_lower:
+                self.theme_name = "triade"
+                self.theme = THEMES["triade"]
+            elif "join4" in cat_lower or "atlantica" in cat_lower or "join4" in fp_lower:
                 self.theme_name = "join4"
                 self.theme = THEMES["join4"]
-            elif "ordem" in cat_lower or "rpg" in cat_lower:
+            elif "ordem" in cat_lower or "rpg" in cat_lower or "/rpg" in fp_lower:
                 self.theme_name = "rpg"
                 self.theme = THEMES["rpg"]
             elif "curriculo" in cat_lower or "currículo" in cat_lower or layout_val == "curriculo":
@@ -776,7 +840,7 @@ class PDFGenerator:
             return False
 
         # 2. Processamento e Sanitização
-        processor = MDXProcessor(raw_content, theme_name=self.theme_name)
+        processor = MDXProcessor(raw_content, theme_name=self.theme_name, file_path=self.mdx_file)
         processed_md, metadata, mermaid_blocks = processor.process()
 
         # 3. Montagem do HTML
@@ -1541,10 +1605,12 @@ class PDFGenerator:
     .mermaid {{
       width: 100%;
       text-align: center;
+      display: flex;
+      justify-content: center;
     }}
     .mermaid svg {{
-      width: 100% !important;
-      height: auto !important;
+      max-width: 100%;
+      height: auto;
     }}
 
     {curriculo_styles}
@@ -1560,11 +1626,18 @@ class PDFGenerator:
     mermaid.initialize({{
       startOnLoad: false,
       theme: 'neutral',
-      fontSize: 13,
+      fontSize: 14,
       flowchart: {{
         useMaxWidth: true,
         htmlLabels: false,
         curve: 'basis'
+      }},
+      sequence: {{
+        wrap: true,
+        width: 180,
+        showSequenceNumbers: true,
+        boxMargin: 8,
+        messageMargin: 25
       }},
       fontFamily: {font_family_json}
     }});
@@ -1612,7 +1685,7 @@ class PDFGenerator:
 
         clean_category = metadata.get("category_display") or format_category_display(metadata.get("category", "Documentação Técnica"))
         header_sub = theme.get("brand_sub") or clean_category
-        brand_name = theme.get("brand_name", "TRÍADE DIGITAL")
+        brand_name = theme.get("brand_name", "DOCUMENTAÇÃO TÉCNICA")
 
         header_template = f'''
         <div style="font-size: 7pt; font-family: -apple-system, sans-serif; width: 100%; display: flex; justify-content: space-between; padding: 0 14mm; color: #94a3b8;">
@@ -1749,6 +1822,98 @@ class PDFGenerator:
         except Exception as e:
             log_error(f"Falha ao auditar arquivo PDF com pypdf: {e}")
             return False
+
+
+
+# =============================================================================
+# GERADOR DE PDF PARA ARTEFATOS HTML (A4 DOCUMENTOS & RELATÓRIOS)
+# =============================================================================
+class HTMLDocumentPDFGenerator:
+    """Compila documentos e relatórios HTML5/Tailwind diretamente em PDFs corporativos A4 pixel-perfect."""
+
+    def __init__(self, html_file: Path, output_pdf: Path = None, verbose: bool = False):
+        self.html_file = html_file if html_file.is_absolute() else (WORKSPACE_DIR / html_file).resolve()
+        if output_pdf:
+            self.output_pdf = output_pdf if output_pdf.is_absolute() else (WORKSPACE_DIR / output_pdf).resolve()
+        else:
+            self.output_pdf = self._default_output_path(self.html_file)
+        self.verbose = verbose
+
+    def _default_output_path(self, html_path: Path) -> Path:
+        parent_dir = html_path.parent
+        pdf_dir = parent_dir / "pdf"
+        pdf_dir.mkdir(parents=True, exist_ok=True)
+        return pdf_dir / f"{html_path.stem}.pdf"
+
+    def build(self) -> bool:
+        log_info(f"Processando Artefato HTML: {self.html_file.name}")
+        if self.verbose:
+            print(f"       Origem:  {self.html_file}")
+            print(f"       Destino: {self.output_pdf}")
+
+        if not self.html_file.exists():
+            log_error(f"Arquivo não encontrado: {self.html_file}")
+            return False
+
+        try:
+            from playwright.sync_api import sync_playwright
+
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page(viewport={"width": 1280, "height": 1800})
+                page.goto(self.html_file.resolve().as_uri(), wait_until="networkidle")
+
+                # Aguardar renderização de diagramas Mermaid se presentes
+                try:
+                    page.wait_for_timeout(600)
+                    has_mermaid = page.evaluate("document.querySelectorAll('.mermaid, pre.mermaid').length > 0")
+                    if has_mermaid:
+                        page.wait_for_selector(".mermaid svg, pre.mermaid svg", timeout=4000)
+                except Exception:
+                    pass
+
+                # Aguardar carregamento de fontes
+                try:
+                    page.evaluate("document.fonts.ready")
+                except Exception:
+                    pass
+
+                page.pdf(
+                    path=str(self.output_pdf),
+                    format="A4",
+                    print_background=True,
+                    margin={"top": "0mm", "bottom": "0mm", "left": "0mm", "right": "0mm"},
+                    prefer_css_page_size=True
+                )
+                browser.close()
+
+            return self._verify_generated_pdf()
+
+        except Exception as e:
+            log_error(f"Falha ao gerar PDF a partir do HTML: {e}")
+            return False
+
+    def _verify_generated_pdf(self) -> bool:
+        import pypdf
+        if not self.output_pdf.exists():
+            log_error(f"Arquivo PDF não encontrado: {self.output_pdf}")
+            return False
+
+        file_size_kb = self.output_pdf.stat().st_size / 1024
+        reader = pypdf.PdfReader(str(self.output_pdf))
+        num_pages = len(reader.pages)
+
+        print(f"{LogColor.CYAN}[PÓS-VERIFICAÇÃO DE INTEGRIDADE DO ARTEFATO HTML]{LogColor.RESET}")
+        print(f"  ✔ Arquivo PDF: {self.output_pdf.name} ({file_size_kb:.1f} KB)")
+        print(f"  ✔ Total de Páginas: {num_pages} página(s)")
+        print(f"  ✔ Formato: A4 Documento / Relatório Corporativo")
+
+        try:
+            rel_path = self.output_pdf.relative_to(WORKSPACE_DIR)
+        except Exception:
+            rel_path = self.output_pdf
+        log_success(f"PDF do Artefato HTML gerado com sucesso: {rel_path}")
+        return True
 
 
 # =============================================================================
@@ -1914,11 +2079,19 @@ def main():
     for target in targets:
         if target.suffix.lower() == ".html":
             out_pdf = Path(args.output) if args.output else None
-            generator = SlideDeckPDFGenerator(
-                html_file=target,
-                output_pdf=out_pdf,
-                verbose=args.verbose
-            )
+            html_content = target.read_text(encoding="utf-8", errors="ignore") if target.exists() else ""
+            if "class=\"slide\"" in html_content or "class='slide'" in html_content or ("slide" in html_content and "showSlide" in html_content):
+                generator = SlideDeckPDFGenerator(
+                    html_file=target,
+                    output_pdf=out_pdf,
+                    verbose=args.verbose
+                )
+            else:
+                generator = HTMLDocumentPDFGenerator(
+                    html_file=target,
+                    output_pdf=out_pdf,
+                    verbose=args.verbose
+                )
             if generator.build():
                 total_success += 1
             else:

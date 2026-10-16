@@ -19,12 +19,12 @@ Este arquivo funciona como o mapa central de tópicos, links rápidos e taxonomi
 
 <!-- AUTO-GENERATED:MATRIX:START -->
 <!-- prettier-ignore-start -->
-| Categoria / Pasta | Escopo Principal | Documentos Existentes (.mdx) | Resumo do Assunto |
+| Categoria / Pasta | Escopo Principal | Documentos Existentes (.html) | Resumo do Assunto |
 | :--- | :--- | :--- | :--- |
 | **`trabalho`** | Anotações e documentação de trabalho. | [`README.mdx`](trabalho/README.mdx) | **Central de Trabalho & Projetos Corporativos**: Organize aqui seus projetos de empresas, clientes e tarefas corporativas com ciclo de vida. |
 | **`projetos`** | Projetos pessoais, estudos e ideias gerais fora do trabalho. | [`README.mdx`](projetos/README.mdx) | **Central de Projetos Pessoais & Inovações**: Organize aqui seus projetos pessoais, criações open-source, automações e ideias de produtos. |
+| **`exemplos`** | Exemplos de atas, tarefas e documentos padronizados do repositório. | [`01-ata-reuniao-arquitetura.html`](exemplos/01-ata-reuniao-arquitetura.html), [`02-tarefa-autenticacao-jwt.html`](exemplos/02-tarefa-autenticacao-jwt.html) | Consolidação de 2 documentos (Ata Executiva: Definição de Arquitetura de Microsserviços e Event-Driven, TASK-001: Implementação de Autenticação Segura JWT com Refresh Token e Rotação). |
 | **`00-meta`** | Templates de notas, modelos de websites e diretrizes de governança do repositório. | [`GUIA_STACK_TECNOLOGICA_RECOMENDADA.mdx`](00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.mdx), [`TEMPLATE_TAREFA.mdx`](00-meta/TEMPLATE_TAREFA.mdx), [`TEMPLATE_NOTA.mdx`](00-meta/TEMPLATE_NOTA.mdx) | Consolidação de 3 documentos (Guia da Stack Tecnológica Homologada para Planejamento de Projetos e Arquitetura, Template de Tarefa & Acompanhamento de Execução, Título do Assunto). |
-| **`exemplos`** | Anotações e documentação de exemplos. | [`01-ata-reuniao-arquitetura.mdx`](exemplos/01-ata-reuniao-arquitetura.mdx), [`02-tarefa-autenticacao-jwt.mdx`](exemplos/02-tarefa-autenticacao-jwt.mdx) | Consolidação de 2 documentos (Ata Executiva: Definição de Arquitetura de Microsserviços e Event-Driven, TASK-001: Implementação de Autenticação Segura JWT com Refresh Token e Rotação). |
 <!-- prettier-ignore-end -->
 <!-- AUTO-GENERATED:MATRIX:END -->
 ---

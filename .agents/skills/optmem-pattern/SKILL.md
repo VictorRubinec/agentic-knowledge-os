@@ -1,81 +1,104 @@
 ---
 name: optmem-pattern
-description: Padrão de memória permanente ultracompacta para agentes de IA autônomos baseado no OptMem (VictorTaelin). Permite persistência contínua entre sessões sem overhead de bancos vetoriais, consumindo menos de 500 tokens.
+description: Padrão oficial de memória permanente para agentes de IA autônomos baseado no OptMem (VictorTaelin). Inclui a ferramenta CLI memo em Python, árvore binária de resumos, busca indexada em O(1) e o prompt mestre de 426 tokens.
 ---
 
-# Padrão de Memória Enxuta para Agentes (`optmem-pattern`)
+# Padrão Oficial de Memória OptMem (`optmem-pattern`)
 
-Esta skill formaliza o padrão de **memória de longo prazo ultraleve** para agentes e subagentes autônomos no repositório, baseado na arquitetura **OptMem** ([github.com/VictorTaelin/OptMem](https://github.com/VictorTaelin/OptMem)).
-
----
-
-## 1. Filosofia: Por que OptMem em vez de RAG / Vetores?
-
-1. **Zero Infraestrutura**: Dispensa bancos de dados vetoriais (Chroma, Pinecone, Qdrant), containers Docker e custos de embeddings.
-2. **Previsibilidade de Contexto**: A memória do agente ocupa uma fração fixa da janela de contexto (**~426 tokens**), deixando 99% do contexto livre para código e raciocínio.
-3. **Persistência Humana-Legível**: A memória é armazenada em formato texto/Markdown puro (`agent_memory.md`), permitindo que desenvolvedores leiam, auditem e editem o estado mental do agente a qualquer momento.
+Esta skill formaliza a integração da arquitetura **OptMem** ([github.com/VictorTaelin/OptMem](https://github.com/VictorTaelin/OptMem)) de Victor Taelin no repositório, disponibilizando a ferramenta CLI [`scripts/optmem_memo.py`](../../../scripts/optmem_memo.py) para persistência de longo prazo, compressão hierárquica e busca determinística em tempo constante ($O(1)$).
 
 ---
 
-## 2. O Prompt Mestre de Compressão (426 Tokens)
+## 1. Arquitetura do OptMem
 
-Ao inicializar ou encerrar ciclos de tarefas longas, o agente deve carregar ou atualizar seu bloco de memória seguindo este prompt:
+Diferente de bancos vetoriais pesados (Pinecone, Chroma, Qdrant) ou arquivos Markdown de anexo infinito, o OptMem organiza as memórias em uma **árvore binária de compressões** armazenada em texto puro:
 
-```text
-Você é um agente com memória persistente bounded.
-Sua memória é mantida em um único arquivo de texto estruturado.
-
-ESTRUTURA DA MEMÓRIA:
-1. FATOS FIXOS: Preferências permanentes do usuário, stack técnica homologada, restrições imutáveis.
-2. CONTEXTO ATUAL: Projeto ativo, objetivo imediato da sessão, último estado verificado.
-3. LIÇÕES APRENDIDAS: Erros corrigidos, alertas de linters, decisões tomadas para não repetir falhas.
-4. PENDÊNCIAS IMEDIATAS: Próximo passo exato a ser executado no retorno.
-
-REGRAS DE ATUALIZAÇÃO (COMPRESSÃO CONTÍNUA):
-- Ao receber novas informações, NUNCA apenas anexe linhas infinitas.
-- SOBRESCREVA fatos antigos com versões mais recentes e precisas.
-- Seja telegráfico, denso e direto. Elimine cortesias e palavras de preenchimento.
-- Mantenha o tamanho total do arquivo SEMPRE abaixo de 500 tokens (~300 palavras).
+```
+~/.optmem/ (ou $MEMORY_DIR)
+  memo          -> Ferramenta CLI (Python 3 puro, zero dependências)
+  memory/
+    LOG.txt     -> Histórico completo de memórias, append-only (1 linha por fato, até 280 bytes)
+    TREE/       -> Resumos hierárquicos em árvore binária (#0-1, #2-3, #0-3, etc.)
+    config      -> Configurações de orçamento de leitura (WAKE_LINES)
 ```
 
----
-
-## 3. Protocolo Operacional para Subagentes
-
-Quando um agente for disparado para executar tarefas de múltiplos passos (como triagem de incidentes, monitoramento de filas ou automações no ClickUp):
-
-1. **Passo 1 (Leitura)**: No início da execução, o agente lê seu arquivo de estado mental:
-   * Local padrão para tarefas: `<task_folder>/scratch/agent_memory.md` ou `scratch/agent_memory.md`.
-2. **Passo 2 (Execução)**: Opera suas ferramentas normalmente, mantendo em mente os fatos fixos e o objetivo imediato.
-3. **Passo 3 (Compressão & Gravação)**: Antes de finalizar o turno ou repassar o controle, o agente reescreve o `agent_memory.md` com o novo estado comprimido.
+* **Custo Fixo de Contexto**: O comando `wake` imprime apenas o orçamento configurado (default: 96 linhas ≈ 8k tokens ou 300 linhas), preservando 95%+ da janela para raciocínio.
+* **Velocidade Extrema**: Registro de largura fixa (fixed width) permite seek direto. Em 1 milhão de memórias (608 MB), o comando `wake` executa em **0.03 segundos**.
+* **Zero Background**: Nenhuma rotina roda em segundo plano. Os merges e compressões ocorrem sob demanda durante a execução.
 
 ---
 
-## 4. Exemplo de Estrutura de `agent_memory.md`
+## 2. Comandos da CLI (`scripts/optmem_memo.py`)
+
+A ferramenta está disponível diretamente em `scripts/optmem_memo.py`:
+
+| Comando | Descrição | Quando Usar |
+| :--- | :--- | :--- |
+| `python scripts/optmem_memo.py wake` | Lê o estado mental do agente. | **Obrigatório no início de toda sessão.** |
+| `python scripts/optmem_memo.py note "<texto>"` | Grava 1 memória (máx. 280 bytes). | Ao aprender fatos novos, decisões ou lições. |
+| `python scripts/optmem_memo.py nap` | Executa compressões pendentes na árvore. | Sempre que `note` ou `wake` solicitar. |
+| `python scripts/optmem_memo.py recall <regex>` | Busca exata em todo o histórico. | Para recuperar decisões antigas ou regras esquecidas. |
+| `python scripts/optmem_memo.py zoom <lo>-<hi>` | Abre um nó de resumo em duas metades. | Para detalhar blocos comprimidos da árvore. |
+| `python scripts/optmem_memo.py forget <lo>-<hi>` | Descarta um resumo incorreto para re-compressão. | Caso uma compressão tenha ficado imprecisa. |
+
+---
+
+## 3. O Prompt Canônico do Agente (426 Tokens)
+
+Para ativação do OptMem em agentes principais:
 
 ```markdown
-# Agent Mental State
+## Memory
 
-### Fatos Fixos
-- Usuário prefere minimalismo estrito (YAGNI / Anti-bloat).
-- Stack: Python 3.11+, Playwright Chromium, Shard Cloud, DBX MCP.
-- Proibido instalar PyTorch/CUDA ou containers Docker pesados no repo.
+Your memory is OptMem:
+- The tool is `python scripts/optmem_memo.py` (or `memo`)
+- Your memories are in `~/.optmem/memory` (or `$MEMORY_DIR`)
 
-### Contexto Atual
-- Projeto: Empresa / Startup / ConsultasPortal BFF.
-- Status: Endpoint de autenticação ajustado, pendente teste de carga.
+OptMem outlives every session, compaction, model and vendor change.
+Without it you do not know who you are, or what was decided and tried.
 
-### Lições Aprendidas
-- Linters de PDF exigem tags Mermaid entre aspas duplas sem formatação HTML.
-- Links internos devem ser relativos, nunca `file:///`.
+### At startup: activating OptMem (mandatory)
 
-### Próximos Passos
-- Rodar pytest nos validadores e gerar status report semanal.
+Run `python scripts/optmem_memo.py wake` before any other tool call, in every session, and
+then do exactly what it prints, to the end of its output.
+
+### While working: register memories (mandatory)
+
+Call `python scripts/optmem_memo.py note "<1 line, max 280 bytes>"` whenever you learn
+something new, or something worth keeping happens. That covers a task
+worth real effort, a fact or insight the user teaches you, anything you
+learn about their life (even indirectly), any event of lasting effect.
+
+Do not register redundant memories.
+
+If `note` asks a compression: do it before your next action (`python scripts/optmem_memo.py nap`).
+
+### When you need an old memory: search, or navigate
+
+`python scripts/optmem_memo.py recall <regex>` searches every memory, word for word.
+`python scripts/optmem_memo.py zoom <a-b>` opens a node into its two halves, down to the raw memories.
+
+### If you're a subagent: skip everything above
+
+Parallel sessions on this machine are all you, and may all write memories.
+A subagent is not: it must never run `memo`, because it cannot judge what
+is already known, and its notes would arrive duplicated and incorrectly.
+When you spawn one, write: `You are a subagent. Don't run memo.`
 ```
 
 ---
 
-## 5. Diretriz de Integração
+## 4. Testes e Validação da Ferramenta
 
-* **Agentes Principais**: Use o histórico de [`MEMORY.md`](../../../MEMORY.md) para governança global do repositório.
-* **Subagentes Efêmeros**: Use `optmem-pattern` para garantir que subagentes mantenham coerência entre chamadas sem sobrecarregar tokens.
+Para validar a integridade da ferramenta no repositório:
+
+```bash
+# Inicializar memória de teste
+python scripts/optmem_memo.py init
+
+# Registrar um fato
+python scripts/optmem_memo.py note "Usuário prefere Artefatos HTML5 com Tailwind em vez de pseudo-MDX."
+
+# Realizar busca
+python scripts/optmem_memo.py recall "Tailwind"
+```

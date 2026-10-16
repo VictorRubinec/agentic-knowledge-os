@@ -33,6 +33,9 @@ IGNORE_DIRS = {
     "build",
     ".next",
     "tests",
+    "templates",
+    "starter-kit",
+    "memoria",
 }
 
 # Regex para links markdown: [texto](url) e ![alt](url)
@@ -54,18 +57,22 @@ SCHEMES_TO_IGNORE = (
     "conversation://",
     "javascript:",
     "data:",
+    "about:",
+    "blob:",
+    "#",
 )
 
 
-def find_markdown_files(root_dir: Path):
-    markdown_files = []
+def find_documents(root_dir: Path, include_html: bool = True):
+    doc_files = []
+    exts = (".md", ".mdx", ".html") if include_html else (".md", ".mdx")
     for root, dirs, files in os.walk(root_dir):
         # Filtra diretórios ignorados in-place
         dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
         for file in files:
-            if file.endswith((".md", ".mdx")) and not file.startswith(TEMPLATE_PREFIX):
-                markdown_files.append(Path(root) / file)
-    return markdown_files
+            if file.endswith(exts) and not file.startswith(TEMPLATE_PREFIX):
+                doc_files.append(Path(root) / file)
+    return doc_files
 
 
 def clean_link_target(raw_url: str) -> str:
@@ -139,6 +146,10 @@ def validate_links_in_file(file_path: Path, root_dir: Path):
 
             # Checa se o arquivo ou diretório existe
             if not resolved.exists():
+                # Fallback: se o link original apontava para .mdx mas o arquivo foi migrado para .html
+                if resolved.suffix == ".mdx" and resolved.with_suffix(".html").exists():
+                    continue
+
                 violations.append((
                     line_num,
                     f"Link quebrado: destino não encontrado '{raw_link}' -> ({resolved})",
@@ -150,18 +161,18 @@ def validate_links_in_file(file_path: Path, root_dir: Path):
 
 def main():
     root_dir = Path(__file__).resolve().parent.parent
-    markdown_files = find_markdown_files(root_dir)
+    doc_files = find_documents(root_dir, include_html=False)
 
-    total_files = len(markdown_files)
+    total_files = len(doc_files)
     total_violations = 0
     files_with_violations = 0
 
     print("=" * 70)
-    print(f"🔍 Validador de Links Markdown - Repositório: {root_dir.name}")
-    print(f"📁 Arquivos .md e .mdx encontrados: {total_files}")
+    print(f"🔍 Validador de Links - Repositório: {root_dir.name}")
+    print(f"📁 Documentos analisados: {total_files}")
     print("=" * 70)
 
-    for file_path in sorted(markdown_files):
+    for file_path in sorted(doc_files):
         rel_path = file_path.relative_to(root_dir)
         violations = validate_links_in_file(file_path, root_dir)
 

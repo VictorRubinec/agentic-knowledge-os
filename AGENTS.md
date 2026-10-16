@@ -12,8 +12,8 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 
 2. **Linha do Tempo Única (Sem Duplicidade)**:
    - **NÃO crie múltiplos arquivos** sobre o mesmo assunto só porque foram falados em datas ou momentos diferentes.
-   - Sempre busque o arquivo `.mdx` existente do assunto. Se ele já existir, **atualize o arquivo** adicionando um novo registro na seção `## Linha do Tempo`.
-   - Crie um novo arquivo `.mdx` apenas quando for um assunto novo e distinto.
+   - Sempre busque o arquivo existente do assunto (`.html` ou `.md`). Se ele já existir, **atualize o arquivo** adicionando um novo registro na seção `## Linha do Tempo`.
+   - Crie um novo arquivo apenas quando for um assunto novo e distinto.
 
 3. **Categorização & Dúvidas**:
    - Verifique a estrutura de pastas descrita no [`ORGANIZATION.md`](ORGANIZATION.md).
@@ -21,11 +21,11 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 
 4. **Hiperlinks Cruzados (Interlinking)**:
    - Sempre que um documento mencionar outro assunto existente no ambiente, crie um hiperlink no texto utilizando palavras-chave.
-   - Exemplo: `Como discutido no projeto [Painel de Métricas](../../trabalho/join4/dashboard.mdx)...`
+   - Exemplo: `Como discutido no projeto [Painel de Métricas](../../trabalho/join4/dashboard.html)...`
 
-5. **Formato MDX Visual**:
-   - Todos os arquivos de conteúdo devem usar a extensão `.mdx`.
-   - Utilize os componentes visuais disponíveis em `components/` (`<Timeline />`, `<Badge />`, `<Callout />`, `<LinkCard />`) e elementos interativos do React/JS quando apropriado.
+5. **Formato Dual (HTML5 Standalone e Markdown)**:
+   - **HTML5 Standalone (`.html`)**: Formato oficial para artefatos consolidados de conhecimento, fichas de RPG, manuais, relatórios executivos e tarefas de produto. Utiliza os componentes semânticos do template (`.timeline`, `.callout`, `.card`, checkboxes nativos) com Tailwind Typography, Mermaid.js nativo e KaTeX.
+   - **Markdown Simples (`.md`)**: Utilizado para ideação rápida, rascunhos em progresso, prompts mestre e arquivos de documentação do sistema (`README.md`, `MEMORY.md`, `AGENTS.md`).
 
 6. **Diagramas e BPMN com Mermaid.js (Padrão de Dimensões e Legibilidade)**:
    - Sempre utilize **Mermaid.js** (blocos ```mermaid) para a construção de fluxogramas, mapas de processos BPMN, arquiteturas de sistema e diagramas de sequência.
@@ -45,7 +45,7 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 
 9. **Preservação do Histórico e Evolução dos Relatórios**:
    - **NUNCA apague ou substitua** análises técnicas, diagnósticos de causa raiz ou trechos de código já documentados em versões anteriores de um relatório.
-   - Trate os arquivos `.mdx` como um diário de bordo e histórico vivo da evolução do projeto do início ao fim.
+   - Trate os arquivos como um diário de bordo e histórico vivo da evolução do projeto do início ao fim.
    - Ao adicionar novas descobertas ou refatorações, **organize o conteúdo em fases cronológicas ou seções históricas** (ex: `## Fase 1: Diagnóstico Inicial e Idempotência`, `## Fase 2: Reunião Técnica e Auditoria dos Chamados`), preservando todo o detalhamento técnico acumulado.
 
 10. **Diretriz de Comunicação com Stakeholders e Não-Técnicos (Customizável)**:
@@ -59,21 +59,21 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 12. **Análise de CSS e Extração de Design Systems (`designsys`)**:
     - Sempre que o usuário solicitar análise de CSS, auditoria visual, extração de design tokens ou mapeamento de design system de um site, utilize a ferramenta `designsys` via `python -X utf8 scripts/analisar_css_site.py "<URL>"`.
     - Os relatórios e entregáveis (PDF, tokens W3C, CSS vars, Tailwind, audit) DEVEM ser organizados estritamente na pasta `trabalho/sites/relatorios/<slug-do-site>/`.
-    - Respeite sempre a **Linha do Tempo Única**: se o site já possuir um relatório `.mdx`, execute a atualização sobre o arquivo existente adicionando uma nova entrada na Linha do Tempo.
+    - Respeite sempre a **Linha do Tempo Única**: se o site já possuir um relatório oficial, execute a atualização sobre o arquivo existente adicionando uma nova entrada na Linha do Tempo.
 
-13. **Diretrizes de Diagramação Visual, Componentes MDX e Exportação para PDF**:
-    - **Renderização de Markdown em Componentes (`<Callout />`)**: Ao embutir textos formatados dentro de componentes React/MDX, garanta que os compiladores HTML/PDF realizem o parser de formatação inline (`**negrito**`, `*itálico*`, links `[texto](url)` e códigos `` `código` ``), evitando que os marcadores asteriscos vazem literalmente no visual final.
-    - **Alinhamento e Estrutura da `<Timeline />`**: Todos os itens de timeline devem agrupar a data (`📅 Data`) e o badge de status em uma linha de cabeçalho (`.timeline-header`), mantendo o marcador circular posicionado exatamente na altura do cabeçalho da linha do tempo.
+13. **Diretrizes de Diagramação Visual, Componentes e Exportação para PDF**:
+    - **Renderização de Markdown em Componentes (`.callout`)**: Ao embutir textos formatados dentro de componentes e callouts, garanta que os compiladores HTML/PDF realizem o parser de formatação inline (`**negrito**`, `*itálico*`, links `[texto](url)` e códigos `` `código` ``), evitando marcadores vazados no visual final.
+    - **Alinhamento e Estrutura da Linha do Tempo (`.timeline`)**: Todos os itens de timeline devem agrupar a data e o badge de status em uma linha de cabeçalho (`.timeline-header`), mantendo o marcador circular posicionado exatamente na altura do cabeçalho da linha do tempo.
     - **Prevenção de Quebras Órfãs em PDFs (Anti-Orphan Headings & Anti-Blank Pages)**:
       - Cabeçalhos (`h1`, `h2`, `h3`, `h4`) e capas corporativas (`.header-cover`) DEVEM possuir `page-break-after: avoid` e `break-after: avoid`.
       - Tabelas, callouts e blocos Mermaid DEVEM ter `page-break-inside: avoid` e altura contida (`max-height: 280px`), impedindo que um diagrama empurre um cabeçalho para o fim de uma página e deixe uma página inteira em branco.
 
 14. **Motor Central Unificado de PDF (`scripts/gerar_pdf.py`) — Proibição de Scripts Paralelos**:
     - **REGRA DE OURO**: É estritamente **PROIBIDO criar novos scripts individuais** (seja em JS ou Python) para compilação de PDFs.
-    - Toda e qualquer geração, validação ou exportação de PDF a partir de `.mdx` DEVE utilizar o motor oficial:
-      `python scripts/gerar_pdf.py "<caminho_do_arquivo.mdx>"`
+    - Toda e qualquer geração, validação ou exportação de PDF a partir de `.html` ou `.md` DEVE utilizar o motor oficial:
+      `python scripts/gerar_pdf.py "<caminho_do_arquivo>"`
     - **Validação Rápida / Linter**: Para checar pendências de sintaxe, proporções de diagramas ou moedas sem renderizar o PDF, use:
-      `python scripts/gerar_pdf.py "<caminho_do_arquivo.mdx>" --check-only`
+      `python scripts/gerar_pdf.py "<caminho_do_arquivo>" --check-only`
     - **Compilação em Lote**: Para gerar PDFs de uma pasta inteira, use:
       `python scripts/gerar_pdf.py --dir "<caminho_da_pasta>"`
 15. **Diretriz de Blocos de Código em Relatórios Técnicos e Arquitetura**:
@@ -89,16 +89,16 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 
 17. **Diretriz de Atualização e Anexo de PDFs no ClickUp (Prevenção de Duplicidade & Aprovação)**:
     - Toda vez que o usuário solicitar a atualização de um documento de tarefa vinculado ao ClickUp:
-      1. **Recompilação Obrigatória**: Recompilar imediatamente o PDF oficial a partir do `.mdx` utilizando o motor unificado:
-         `python scripts/gerar_pdf.py "<caminho_da_tarefa.mdx>"`
+      1. **Recompilação Obrigatória**: Recompilar imediatamente o PDF oficial a partir do `.html` utilizando o motor unificado:
+         `python scripts/gerar_pdf.py "<caminho_da_tarefa.html>"`
       2. **Auditoria Visual & Linter**: Validar conformidade de layout, ausência de quebras órfãs e dados sem erros (`--check-only`).
       3. **Pausa para Aprovação Humana (Gate Mandatório)**: Apresentar o link do PDF compilado ao usuário e **aguardar sua aprovação explícita**. NUNCA anexar ou fazer upload automático no ClickUp antes do "de acordo" do usuário.
       4. **Envio Pós-Aprovação**: Somente após a aprovação do usuário, enviar o arquivo para a tarefa no ClickUp via CLI/API:
          `python scripts/analisador_clickup.py --task <TASK_ID> --attach-pdf "<caminho_do_pdf>"`
-      5. **Tratamento de Ajustes**: Se o usuário apontar correções, aplicar os ajustes no `.mdx`, recompilar e reiniciar o ciclo de aprovação.
+      5. **Tratamento de Ajustes**: Se o usuário apontar correções, aplicar os ajustes no `.html`, recompilar e reiniciar o ciclo de aprovação.
 
 18. **Diretriz de Planejamento de Projetos e Stack Tecnológica Homologada**:
-    - Ao realizar o planejamento de qualquer novo projeto, propor arquitetura de software, definir ferramentas operacionais ou estruturar produtos, os agentes de IA DEVEM obrigatoriamente consultar e priorizar os 9 pilares da stack homologada descritos em [`00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.mdx`](00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.mdx):
+    - Ao realizar o planejamento de qualquer novo projeto, propor arquitetura de software, definir ferramentas operacionais ou estruturar produtos, os agentes de IA DEVEM obrigatoriamente consultar e priorizar os 9 pilares da stack homologada descritos em [`00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.html`](00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.html):
       1. **Hospedagem & Nuvem**: Shard Cloud (`shardcloud.app`) para containers, bots e APIs FastAPI de alta performance e baixo custo (R$ 21,00/mês).
       2. **DevSecOps & Gating**: Aikido Security (`aikido.dev`) para SAST/DAST, secrets scanning e PR Gating obrigatório no GitHub.
       3. **Artes & Assets Visuais**: Artcraft / Crafting Apps / Storytold para geração e curadoria de assets e mídias visuais.
@@ -117,28 +117,36 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 
 ---
 
-## Estrutura de Pastas Sugerida
+## Estrutura de Pastas e Categorias
 
-- `trabalho/`: Projetos corporativos, arquitetura de software, clientes e tarefas.
-  - `trabalho/tarefas/`: Central de acompanhamento e dossiês de execução com ciclo de vida.
-- `projetos/`: Projetos pessoais, produtos SaaS, automações e experimentos.
-- `estudos/`: Pesquisas acadêmicas, cursos, sínteses de livros e anotações técnicas.
-- `exemplos/`: Dossiês e notas modelo para demonstrar a utilização dos componentes MDX e PDF.
-- `components/`: Componentes React/MDX visuais reutilizáveis em relatórios (`<Timeline />`, `<Badge />`, etc.).
-- `00-meta/`: Templates de notas, guia de estilo de escrita e stack recomendada.
-- `scripts/`: Motor de compilação de PDF Playwright, linters e auditoria contínua.
+- `trabalho/join4/`: Demandas, arquitetura, reuniões e ideias relacionadas à Empresa.
+  - `trabalho/join4/produto/`: Ferramentas internas, produtos SaaS e BFFs da área de Produto.
+    - `trabalho/join4/produto/tarefas/`: Central de acompanhamento, escopo, evolução e histórico vivo de tarefas de Produto.
+    - `trabalho/join4/produto/consultas-portal/`: Auditoria e arquitetura BFF do ConsultasPortal.
+  - `trabalho/join4/clientes/`: Anotações e relatórios técnicos por cliente (ex: Atlântica).
+- `trabalho/sites/`: Projetos de desenvolvimento web, landing pages e webapps.
+  - `trabalho/sites/relatorios/`: Relatórios de auditoria de CSS, tokens e design systems extraídos via `designsys`.
+  - `trabalho/sites/pessoal/` e `trabalho/sites/trabalhos/`: Projetos de sites pessoais e corporativos.
+- `rpg/`: Worldbuilding, sessões, regras da casa, NPCs e ideias para campanhas.
+- `studio-kustom/`: Projetos, branding, clientes, equipamentos e ecossistema de software da Studio Kustom.
+  - `studio-kustom/01-negocio-e-operacao/`: Mapeamento de chão de fábrica, insumos, maquinário, custos e auditoria da vitrine Shopee.
+  - `studio-kustom/02-engine-e-arquitetura/`: Planejamento mestre dos 9 motores, Three.js, formatos milimétricos e stack tecnológica.
+  - `studio-kustom/03-agente-ia-e-governanca/`: Contratos JSON do agente autônomo, governança de marcas e temas de exportação.
+- `projetos/`: Outros projetos pessoais e ideias gerais.
+- `components/`: Componentes React/JS visuais reutilizáveis em arquivos MDX.
+- `00-meta/`: Templates de notas e guia de estilo de escrita por pasta.
 
 ---
 
-## Padrão de Arquivo MDX
+## Padrão de Artefato de Conhecimento
 
-Consulte [`00-meta/TEMPLATE_NOTA.mdx`](00-meta/TEMPLATE_NOTA.mdx) ao criar novos documentos. Todo arquivo `.mdx` deve possuir:
+Consulte [`00-meta/TEMPLATE_NOTA.html`](00-meta/TEMPLATE_NOTA.html) ao criar novos documentos. Todo artefato deve possuir:
 
-1. Frontmatter YAML (`title`, `category`, `tags`, `updatedAt`, `status`).
+1. Cabeçalho Corporativo com título, categoria, status e metadados de versão/data.
 2. Resumo Executivo / Visão Geral.
-3. Seções específicas do assunto.
-4. Seção `## Linha do Tempo` (cronológica).
-5. Seção `## Assuntos Relacionados` (links cruzados).
+3. Seções específicas do assunto com diagramas Mermaid e callouts.
+4. Seção de Linha do Tempo (cronológica).
+5. Seção de Assuntos Relacionados (links cruzados).
 
 ---
 

@@ -37,6 +37,9 @@ IGNORE_DIRS = {
     "build",
     ".next",
     "tests",
+    "templates",
+    "starter-kit",
+    "scripts",
 }
 
 MARKER_MATRIX_START = "<!-- AUTO-GENERATED:MATRIX:START -->"
@@ -49,7 +52,9 @@ PRETTIER_IGNORE_END = "<!-- prettier-ignore-end -->"
 
 CATEGORY_DESCRIPTIONS = {
     "trabalho/join4/produto/tarefas": "Painel de controle, acompanhamento de execução, escopo e histórico vivo de tarefas de Produto.",
+    "trabalho/join4/produto/tarefas/anexos/task-005-kpis-gold": "Anexos e consultas SQL de KPIs do Data Lakehouse (TASK-005).",
     "trabalho/join4/produto/consultas-portal": "Auditoria técnica, arquitetura BFF e visão de produto do ConsultasPortal.",
+    "trabalho/join4/produto/relatorios": "Relatórios técnicos de engenharia, arquitetura e alinhamento de Produto Join4.",
     "trabalho/join4/produto": "Ferramentas internas e produtos SaaS desenvolvidos pela área de Produto da Join4.",
     "trabalho/join4/clientes/atlantica/automacoes": "Documentações técnicas, arquitetura e dossiês de robôs RPA da Atlântica.",
     "trabalho/join4/clientes/atlantica/erros": "Relatórios técnicos, incidentes e controle de erros da Atlântica.",
@@ -57,12 +62,23 @@ CATEGORY_DESCRIPTIONS = {
     "trabalho/join4": "Demandas, tarefas, decisões técnicas e reuniões da Join4.",
     "trabalho/triade/comercial": "Instrumentos jurídicos, formulários de descoberta e protocolos de entrega da Triade.",
     "trabalho/triade/plataforma-interna": "Plataforma unificada de gestão de sprints, documentação MDX e contexto de IA da Triade.",
+    "trabalho/triade/projetos/somos1-tattoo-studio/01-negocio/apresentacao-slides": "Roteiros de slides e pitch decks comerciais do Somos1 Tattoo Studio.",
+    "trabalho/triade/projetos/somos1-tattoo-studio/01-negocio": "Especificações de escopo, propostas comerciais e atas de PO do Somos1.",
+    "trabalho/triade/projetos/somos1-tattoo-studio/03-arquitetura-e-tech": "Relatórios de auditoria baseline e engenharia reversa do Somos1.",
+    "trabalho/triade/projetos/somos1-tattoo-studio/04-prototipos": "Dossiês visuais de UI/UX e wireframes do Somos1.",
     "trabalho/triade/projetos/somos1-tattoo-studio": "Plataforma oficial Somos1: Agendamento, CRM, Indicações e Mensageria WhatsApp.",
     "trabalho/triade/projetos/exemplo-projeto-tatuagem": "Projeto de referência Triade: Blackthorn Tattoo Studio.",
     "trabalho/triade/projetos": "Soluções comerciais entregues a clientes externos sob a governança da Triade.",
     "trabalho/triade": "Consultoria, posicionamento, estratégia, governança e metodologia da Triade.",
     "trabalho/sites/relatorios": "Relatórios técnicos de Design System e auditoria de CSS (designsys).",
+    "trabalho/sites/pessoal/cha-casa-nova/conhecimentos": "Bases de conhecimento técnico, regras, design system e PIX do Chá de Casa Nova.",
+    "trabalho/sites/pessoal/cha-casa-nova": "Documento mestre e especificações do Convite Interativo Chá de Casa Nova.",
+    "trabalho/sites/pessoal/site-portfolio-pessoal": "Website pessoal destinado a portfólio profissional e canais de contato.",
     "trabalho/sites/pessoal": "Websites pessoais, landing pages e portfólios próprios.",
+    "trabalho/sites/trabalhos/amg/pacote-assets-ia/documentos-originais": "Documentos e atas de alinhamento originais do cliente AMG Consulting.",
+    "trabalho/sites/trabalhos/amg/prototipos": "Protótipos visuais e wireframes do website AMG.",
+    "trabalho/sites/trabalhos/amg": "Site institucional e guia de desenvolvimento por agentes de IA da AMG.",
+    "trabalho/sites/trabalhos/site-institucional-cliente": "Website institucional comercial para cliente corporativo.",
     "trabalho/sites/trabalhos": "Websites corporativos e comerciais para clientes externos.",
     "trabalho/sites": "Metodologia mestre, diretrizes, topologia e checklists de websites.",
     "rpg/sistemas/ordem-paranormal/criacao-personagem": "Regras de criação de personagem, classes, trilhas e origens de Ordem Paranormal.",
@@ -83,14 +99,24 @@ CATEGORY_DESCRIPTIONS = {
     "rpg/mesas/estacao-monte-calvario": "Campanha One-Shot de Terror Analógico para 8 Jogadores (Sinal 104.7 - Estação Monte Calvário).",
     "rpg/mesas": "Campanhas ativas e arquivadas, sessões, lore e NPCs de RPG.",
     "rpg/personagens": "Fichas de personagens próprios e conceitos de jogo.",
+    "studio-kustom/01-negocio-e-operacao": "Operação física, maquinário, pesquisa e catálogo da Studio Kustom.",
+    "studio-kustom/02-engine-e-arquitetura": "Arquitetura técnica, motores gráficos e infraestrutura do Studio Kustom Engine.",
+    "studio-kustom/03-agente-ia-e-governanca": "Operação autônoma por IA, contratos zero-code e governança visual.",
     "studio-kustom": "Projetos, estratégias, marcas e ideias da Studio Kustom.",
     "projetos/automacao-emails": "Engenharia e desenvolvimento da engine RubiMail Serverless.",
+    "projetos/automacao-fontes/conhecimentos": "Guias técnicos de APIs de fontes, fontTools, scraping e pipelines.",
     "projetos/automacao-fontes": "Motor FontScout para pesquisa e download de fontes em Python.",
     "projetos/monitor-uptime/conhecimentos": "Guias técnicos de SSL socket, Telegram API, worker e status page.",
     "projetos/monitor-uptime": "Prompt mestre e arquitetura do Monitor de Uptime e Status Page.",
     "projetos/gerador-fichas-ordem-2/conhecimentos": "Bases de conhecimento, anatomia A4, design system e schemas do Gerador de Fichas Ordem 2.",
     "projetos/gerador-fichas-ordem-2": "Planejamento e especificação técnica do Gerador Web de Fichas Ordem 2 (300 DPI A4).",
+    "projetos/darkcraft-engine/conhecimentos": "Guias técnicos de automação de vídeo e engines criativas do DarkCraft.",
+    "projetos/darkcraft-engine": "Engine e pipelines de produção de vídeos dark e monetização por IA.",
+    "projetos/knowledge-os-v2": "Arquitetura, roadmap e especificações da modernização do Knowledge OS v2.0.",
+    "projetos/knowledge-studio": "Plataforma de visualização e orquestração de artefatos de conhecimento.",
+    "projetos/curriculos": "Dossiês e modelos de currículos profissionais de tecnologia compilados em PDF.",
     "projetos/pesquisas": "Pesquisas técnicas aprofundadas, benchmarks e instrumentos para tomada de decisão.",
+    "projetos/pesquisas-noturnas": "Dossiês e relatórios de pesquisa autônoma noturna com IA.",
     "projetos": "Projetos pessoais, estudos e ideias gerais fora do trabalho.",
     "pos-ia/00-visao-geral": "Ementa, cronograma acadêmico e matriz de competências da pós-graduação.",
     "pos-ia/disciplinas/00-ambientacao": "Ambientação, diretrizes institucionais (UNIPDS) e setup de desenvolvimento.",
@@ -99,6 +125,8 @@ CATEGORY_DESCRIPTIONS = {
     "pos-ia/projetos": "Catálogo de projetos práticos, laboratórios e projeto final (Capstone) da pós-graduação.",
     "pos-ia/blueprints-e-padroes": "Biblioteca de padrões de arquitetura de IA, snippets e templates de integração.",
     "pos-ia": "Pós-graduação em Engenharia de Software com IA Aplicada (UNIPDS).",
+    "scripts/hyperframes": "Templates e rotinas de geração de vídeo programático via HyperFrames.",
+    "exemplos": "Exemplos de atas, tarefas e documentos padronizados do repositório.",
     "00-meta": "Templates de notas, modelos de websites e diretrizes de governança do repositório.",
 }
 
@@ -144,6 +172,69 @@ def parse_frontmatter(content: str) -> dict:
     return fields
 
 
+def parse_html_document(file_path: Path, root_dir: Path) -> dict:
+    """Extrai metadados completos de um documento HTML5 compilado."""
+    import html as html_lib
+    content = file_path.read_text(encoding="utf-8")
+
+    # 1. Título
+    m_h1 = re.search(r'<h1[^>]*>([\s\S]*?)</h1>', content)
+    if m_h1:
+        title = html_lib.unescape(re.sub(r'<[^>]+>', '', m_h1.group(1)).strip())
+    else:
+        m_title = re.search(r'<title>([\s\S]*?)</title>', content)
+        if m_title:
+            raw_title = re.sub(r' — (?:Documentação Técnica|Livro de Regras).*', '', m_title.group(1))
+            title = html_lib.unescape(re.sub(r'<[^>]+>', '', raw_title).strip())
+        else:
+            title = file_path.stem.replace('-', ' ').title()
+
+    # 2. Categoria e diretório
+    dir_rel = file_path.parent.relative_to(root_dir).as_posix()
+
+    # 3. Status
+    m_status = re.search(r'<header[^>]*>[\s\S]*?<span class="px-2\.5 py-0\.5 rounded-full text-xs font-medium[^"]*">\s*([A-Za-zÀ-ÿ0-9_-]+)\s*</span>', content)
+    status = m_status.group(1).lower() if m_status else "ativo"
+
+    # 4. Tags
+    tags = []
+    m_badges = re.search(r'<div class="flex flex-wrap gap-2 my-3">([\s\S]*?)</div>', content)
+    if m_badges:
+        tags = [html_lib.unescape(x.strip()) for x in re.findall(r'<span[^>]*>([^<]+)</span>', m_badges.group(1))]
+
+    # 5. Resumo
+    summary = ""
+    m_vg = re.search(r'<h2[^>]*>.*?(?:Visão Geral|Resumo|Objetivo).*?</h2>[\s\S]{0,500}?<p[^>]*>([\s\S]*?)</p>', content, re.IGNORECASE)
+    if m_vg:
+        summary = m_vg.group(1)
+    else:
+        m_call = re.search(r'<div class="callout[^"]*">[\s\S]{0,300}?<p[^>]*>([\s\S]*?)</p>', content)
+        if m_call:
+            summary = m_call.group(1)
+        else:
+            m_main = re.search(r'<p[^>]*>([\s\S]*?)</p>', content)
+            if m_main:
+                summary = m_main.group(1)
+
+    summary = html_lib.unescape(re.sub(r'<[^>]+>', '', summary).strip())
+    summary = re.sub(r'\s+', ' ', summary)
+    if len(summary) > 160:
+        summary = summary[:157] + '...'
+    if not summary:
+        summary = "Documento técnico e diretrizes de projeto."
+
+    return {
+        "path": file_path.relative_to(root_dir).as_posix(),
+        "filename": file_path.name,
+        "title": title,
+        "category": dir_rel,
+        "tags": tags,
+        "status": status,
+        "summary": summary,
+        "dir": dir_rel,
+    }
+
+
 def extract_summary(content: str) -> str:
     """Extrai uma breve descrição do documento a partir da seção de Visão Geral."""
     # Remove frontmatter
@@ -174,12 +265,34 @@ def extract_summary(content: str) -> str:
 
 
 def collect_mdx_metadata(root_dir: Path):
+    """Coleta metadados de documentos do repositório (priorizando .html, com fallback a .mdx)."""
     docs = []
+    seen_bases = set()
+
+    # Passagem 1: Documentos HTML
+    for root, dirs, files in os.walk(root_dir):
+        dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
+        for file in files:
+            if file.endswith(".html"):
+                file_path = Path(root) / file
+                base_key = (file_path.parent.relative_to(root_dir).as_posix(), file_path.stem)
+                try:
+                    doc_data = parse_html_document(file_path, root_dir)
+                    docs.append(doc_data)
+                    seen_bases.add(base_key)
+                except Exception as e:
+                    print(f"⚠️ Aviso: falha ao processar {file_path}: {e}")
+                    continue
+
+    # Passagem 2: Documentos .mdx residuais sem versão HTML
     for root, dirs, files in os.walk(root_dir):
         dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
         for file in files:
             if file.endswith(".mdx"):
                 file_path = Path(root) / file
+                base_key = (file_path.parent.relative_to(root_dir).as_posix(), file_path.stem)
+                if base_key in seen_bases:
+                    continue
                 rel_path = file_path.relative_to(root_dir).as_posix()
                 try:
                     content = file_path.read_text(encoding="utf-8")
@@ -218,7 +331,7 @@ def generate_matrix_section(docs):
 
     # Ordena categorias com prioridade lógica: trabalho -> rpg -> studio-kustom -> projetos -> meta
     def category_sort_key(cat):
-        order_prefixes = ["trabalho/join4", "trabalho/triade", "trabalho/sites", "trabalho", "pos-ia", "rpg/sistemas", "rpg/mesas", "rpg", "studio-kustom", "projetos", "00-meta"]
+        order_prefixes = ["trabalho/join4", "trabalho/triade", "trabalho/sites", "trabalho", "pos-ia", "rpg/sistemas", "rpg/mesas", "rpg", "studio-kustom", "projetos", "scripts", "exemplos", "00-meta"]
         for idx, prefix in enumerate(order_prefixes):
             if cat.startswith(prefix):
                 return (idx, cat)
@@ -227,7 +340,7 @@ def generate_matrix_section(docs):
     sorted_categories = sorted(categories.keys(), key=category_sort_key)
 
     lines = [
-        "| Categoria / Pasta | Escopo Principal | Documentos Existentes (.mdx) | Resumo do Assunto |",
+        "| Categoria / Pasta | Escopo Principal | Documentos Existentes (.html) | Resumo do Assunto |",
         "| :--- | :--- | :--- | :--- |",
     ]
 
@@ -297,7 +410,7 @@ def update_organization_content(current_content: str, matrix_text: str, index_te
     # 1. Substituição ou inserção da Matriz
     if MARKER_MATRIX_START in content and MARKER_MATRIX_END in content:
         pattern = re.escape(MARKER_MATRIX_START) + r".*?" + re.escape(MARKER_MATRIX_END)
-        content = re.sub(pattern, new_matrix_block, content, flags=re.DOTALL)
+        content = re.sub(pattern, lambda _: new_matrix_block, content, flags=re.DOTALL)
     else:
         # Procura a seção ## Matriz de Categorias e Resumo de Documentos
         matrix_header = "## Matriz de Categorias e Resumo de Documentos"
@@ -305,18 +418,18 @@ def update_organization_content(current_content: str, matrix_text: str, index_te
             # Encontra até o próximo header de nível 2 ou fim
             pattern = re.escape(matrix_header) + r"\n\n.*?(?=\n---\n|\n## |\Z)"
             replacement = f"{matrix_header}\n\n{new_matrix_block}"
-            content = re.sub(pattern, replacement, content, count=1, flags=re.DOTALL)
+            content = re.sub(pattern, lambda _: replacement, content, count=1, flags=re.DOTALL)
 
     # 2. Substituição ou inserção do Índice
     if MARKER_INDEX_START in content and MARKER_INDEX_END in content:
         pattern = re.escape(MARKER_INDEX_START) + r".*?" + re.escape(MARKER_INDEX_END)
-        content = re.sub(pattern, new_index_block, content, flags=re.DOTALL)
+        content = re.sub(pattern, lambda _: new_index_block, content, flags=re.DOTALL)
     else:
         index_header = "## Índice de Palavras-Chave e Links Rápidos"
         if index_header in content:
             pattern = re.escape(index_header) + r"\n\n.*?\Z"
             replacement = f"{index_header}\n\n{new_index_block}\n"
-            content = re.sub(pattern, replacement, content, count=1, flags=re.DOTALL)
+            content = re.sub(pattern, lambda _: replacement, content, count=1, flags=re.DOTALL)
 
     return content
 
