@@ -1845,7 +1845,59 @@ class HTMLDocumentPDFGenerator:
         pdf_dir.mkdir(parents=True, exist_ok=True)
         return pdf_dir / f"{html_path.stem}.pdf"
 
-    def build(self) -> bool:
+    def _validate_dom_structure(self, html_content: str) -> bool:
+        """Valida a conformidade estrita com o Design System oficial do Knowledge OS."""
+        import re
+
+        errors = []
+        warnings = []
+
+        # 1. Checagem de Fundo do Body (proibir fundos cinzas ou cards globais)
+        body_match = re.search(r'<body[^>]*class=["\']([^"\']*)["\']', html_content, re.IGNORECASE)
+        if body_match:
+            body_classes = body_match.group(1).split()
+            prohibited_bg = [c for c in body_classes if re.match(r'^bg-(slate|gray|zinc|neutral|stone)-(50|100|200)$', c)]
+            if prohibited_bg:
+                errors.append(f"O <body> possui classe de fundo cinza proibida ({', '.join(prohibited_bg)}). O padrão oficial exige folha branca contínua ('bg-white text-slate-800').")
+            if "bg-white" not in body_classes:
+                warnings.append("O <body> não possui explicitamente a classe 'bg-white'.")
+
+        # 2. Checagem de Container Raiz (.document-container)
+        if "document-container" not in html_content:
+            errors.append("Container raiz '.document-container' não encontrado. O documento deve usar: <div class=\"document-container max-w-4xl mx-auto px-6 py-8 sm:px-12 sm:py-12\">.")
+
+        # 3. Checagem de Card Externo Proibido ao redor do conteúdo
+        if re.search(r'class=["\'][^"\']*\b(rounded-xl|rounded-2xl|shadow-sm|shadow-md)\b[^"\']*\bborder\b[^"\']*["\'][^>]*>\s*<!-- Header', html_content, re.IGNORECASE) or \
+           re.search(r'<div[^>]*class=["\'][^"\']*\bborder-slate-200\b[^"\']*\brounded-xl\b[^"\']*["\'][^>]*>\s*<header', html_content, re.IGNORECASE):
+            errors.append("Detectado wrapper de card flutuante envolvendo a página inteira. O padrão corporativo proíbe caixas flutuantes externas.")
+
+        # 4. Checagem de Header Corporativo (.header-cover)
+        if "header-cover" not in html_content:
+            warnings.append("Cabeçalho corporativo com classe '.header-cover' não identificado.")
+
+        # 5. Checagem de Grade de Metadados
+        if "grid-cols-4" not in html_content and "grid-cols-2" not in html_content:
+            warnings.append("Grade de metadados em 4 colunas (Data, Autor, Contexto, Versão) não identificada no cabeçalho.")
+
+        if warnings and self.verbose:
+            for w in warnings:
+                log_warn(f"[DESIGN SYSTEM] {w}")
+
+        if errors:
+            print(f"\n{LogColor.RED}======================================================={LogColor.RESET}")
+            print(f"{LogColor.RED}❌ VIOLAÇÃO ESTRUTURAL DE DESIGN SYSTEM (Linter de DOM){LogColor.RESET}")
+            print(f"{LogColor.RED}======================================================={LogColor.RESET}")
+            for err in errors:
+                print(f"  • {err}")
+            print(f"\n{LogColor.YELLOW}💡 Como resolver na raiz:{LogColor.RESET}")
+            print(f"  Gere o arquivo através da CLI oficial de scaffolding:")
+            print(f'  python scripts/novo_documento.py --titulo "..." --arquivo "{self.html_file.name}" --preset plano-acao')
+            print(f"{LogColor.RED}======================================================={LogColor.RESET}\n")
+            return False
+
+        return True
+
+    def build(self, check_only: bool = False) -> bool:
         log_info(f"Processando Artefato HTML: {self.html_file.name}")
         if self.verbose:
             print(f"       Origem:  {self.html_file}")
@@ -1854,6 +1906,14 @@ class HTMLDocumentPDFGenerator:
         if not self.html_file.exists():
             log_error(f"Arquivo não encontrado: {self.html_file}")
             return False
+
+        html_content = self.html_file.read_text(encoding="utf-8", errors="ignore")
+        if not self._validate_dom_structure(html_content):
+            return False
+
+        if check_only:
+            log_success(f"Artefato HTML em total conformidade com o Design System: {self.html_file.name}")
+            return True
 
         try:
             from playwright.sync_api import sync_playwright
@@ -2092,7 +2152,7 @@ def main():
                     output_pdf=out_pdf,
                     verbose=args.verbose
                 )
-            if generator.build():
+            if generator.build(check_only=args.check_only):
                 total_success += 1
             else:
                 total_failures += 1

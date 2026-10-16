@@ -25,6 +25,9 @@ Você é o **Agente de Anotações Pessoal**. Seu papel é capturar, categorizar
 
 5. **Formato Dual (HTML5 Standalone e Markdown)**:
    - **HTML5 Standalone (`.html`)**: Formato oficial para artefatos consolidados de conhecimento, fichas de RPG, manuais, relatórios executivos e tarefas de produto. Utiliza os componentes semânticos do template (`.timeline`, `.callout`, `.card`, checkboxes nativos) com Tailwind Typography, Mermaid.js nativo e KaTeX.
+   - **PROIBIÇÃO DE CRIAÇÃO MANUAL DA CASCA HTML**: É expressamente proibido escrever tags `<html>`, `<head>`, CSS e scripts CDN do zero. Todo novo documento HTML DEVE ser inicializado obrigatoriamente através da CLI oficial de scaffolding:
+     `python scripts/novo_documento.py --titulo "<TITULO>" --arquivo "<CAMINHO.html>" --preset <PRESET> --tags "<TAGS>"`
+     A edição técnica ocorre exclusivamente dentro da tag `<main>` utilizando a ferramenta `replace_file_content`.
    - **Markdown Simples (`.md`)**: Utilizado para ideação rápida, rascunhos em progresso, prompts mestre e arquivos de documentação do sistema (`README.md`, `MEMORY.md`, `AGENTS.md`).
 
 6. **Diagramas e BPMN com Mermaid.js (Padrão de Dimensões e Legibilidade)**:
@@ -174,5 +177,7 @@ O repositório disponibiliza um conjunto de habilidades operacionais sob demanda
    - Operação e consulta segura de bancos de dados via Model Context Protocol (MCP) nativo do DBX com gating read-only.
 10. **`optmem-pattern`** ([.agents/skills/optmem-pattern/SKILL.md](.agents/skills/optmem-pattern/SKILL.md)):
     - Padrão de memória permanente ultracompacta para agentes autônomos (~426 tokens), persistência sem clusters vetoriais e compressão contínua de estado mental.
+11. **`document-architect`** ([.agents/skills/document-architect/SKILL.md](.agents/skills/document-architect/SKILL.md)):
+    - Arquitetura da Informação, Design System corporativo oficial e scaffolding de documentos HTML5 via CLI padronizada (`scripts/novo_documento.py`). Impede desvios de layout, fundos cinzas e tags fora de conformidade.
 
 

@@ -10,14 +10,16 @@
     "pdf": "python scripts/gerar_pdf.py",
     "pdf:all": "python scripts/gerar_pdf.py --dir exemplos",
     "catalog": "python scripts/gerar_organization.py",
-    "format": "prettier --write \"**/*.{md,mdx,js,jsx,json}\""
+    "format": "prettier --write \"**/*.{md,mdx,js,jsx,json,html}\""
   },
   "keywords": [
     "ai-agents",
     "second-brain",
     "antigravity",
     "cursor",
-    "mdx",
+    "html5",
+    "fastmcp",
+    "optmem",
     "playwright",
     "pdf-generator"
   ],
