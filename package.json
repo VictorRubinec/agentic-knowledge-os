@@ -1,9 +1,11 @@
 {
   "name": "agentic-knowledge-os",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Second Brain & Knowledge Operating System for Autonomous AI Agents (Antigravity, Cursor, Claude Code)",
   "license": "MIT",
   "scripts": {
+    "mcp": "python scripts/knowledge_os_mcp.py",
+    "test": "pytest",
     "doctor": "python scripts/validar_links.py && python scripts/validar_frontmatter.py",
     "pdf": "python scripts/gerar_pdf.py",
     "pdf:all": "python scripts/gerar_pdf.py --dir exemplos",
