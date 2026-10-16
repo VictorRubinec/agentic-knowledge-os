@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia da Stack Tecnológica Homologada para Planejamento de Projetos e Arquitetura — Documentação Técnica</title>
+  <!-- Tailwind CSS com plugin de Tipografia via CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <!-- Mermaid.js para diagramas nativos -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- KaTeX para fórmulas matemáticas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      line-height: 1.65;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Tipografia e Hierarquia do Conteúdo */
+    main h1 {
+      font-size: 1.875rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.025em;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    main h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    main h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+    main h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 1.25rem;
+      margin-bottom: 0.35rem;
+    }
+    main p {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: #334155;
+      line-height: 1.7;
+    }
+    main ul:not(.custom-list) {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    main ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    main li {
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
+      color: #334155;
+    }
+    main hr {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      border: 0;
+      border-top: 1px solid #e2e8f0;
+    }
+    main code:not(pre code) {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+      font-size: 0.85em;
+      font-weight: 500;
+      border: 1px solid #e2e8f0;
+    }
+    main a {
+      color: #0284c7;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 500;
+    }
+    main a:hover {
+      color: #0369a1;
+    }
+
+    /* Checkboxes de Tarefas e Remoção de Marcadores Duplicados */
+    main ul:has(.task-checkbox), main ul.list-none, main ul.custom-list {
+      list-style-type: none !important;
+      padding-left: 0.25rem !important;
+    }
+    main li:has(> .task-checkbox) {
+      list-style-type: none !important;
+      display: flex;
+      align-items: flex-start;
+      margin-top: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .task-checkbox {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      line-height: 1;
+      margin-right: 0.5rem;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .task-checkbox.checked {
+      color: #10b981;
+    }
+    .task-checkbox.unchecked {
+      color: #94a3b8;
+    }
+
+    /* Componentes Semânticos */
+    .callout {
+      border-left-width: 4px;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .callout-info { background-color: #f0f9ff; border-color: #0284c7; color: #0c4a6e; }
+    .callout-warn { background-color: #fffbeb; border-color: #f59e0b; color: #78350f; }
+    .callout-danger { background-color: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #14532d; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      border-left: 2px solid #e2e8f0;
+      margin-left: 12px;
+      padding-left: 24px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -31px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #0284c7;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 0 2px #0284c7;
+    }
+
+    /* Diagramas Mermaid Otimizados */
+    .mermaid-wrapper {
+      display: block;
+      margin: 28px 0;
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px 16px;
+      overflow-x: auto;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      min-width: min-content;
+    }
+    .mermaid svg {
+      height: auto !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+    .mermaid .node rect, .mermaid .node polygon {
+      stroke-width: 2px !important;
+      rx: 8px !important;
+      ry: 8px !important;
+    }
+    .mermaid .label {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      line-height: 1.4 !important;
+    }
+    .mermaid .edgeLabel {
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      background: #ffffff !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* Estilização de Tabelas */
+    table {
+      width: 100%;
+      margin: 24px 0;
+      border-collapse: collapse;
+      font-size: 0.9em;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid #e2e8f0;
+      color: #334155;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+    }
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Regras de Impressão e PDF */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 14mm 14mm 16mm 14mm;
+      }
+
+      body {
+        background-color: #ffffff !important;
+        font-size: 9.5pt;
+        color: #0f172a !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .document-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      h1, h2, h3, h4, .header-cover {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      .avoid-break, .callout, .card, .timeline-item, table, .mermaid-wrapper {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .page-break {
+        page-break-before: always;
+        break-before: always;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Container Principal Fluido (Estilo Web / Documento Natural) -->
+  <div class="document-container max-w-4xl mx-auto px-6 py-8 sm:px-12 sm:py-12">
+    <!-- Header Cover Corporativo -->
+    <header class="header-cover border-b border-slate-200 pb-8 mb-8">
+      <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+        <span class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+          00 Meta
+        </span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          ATIVO
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+        Guia da Stack Tecnológica Homologada para Planejamento de Projetos e Arquitetura
+      </h1>
+
+      <!-- Grade de Metadados -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200/80 text-xs mt-6">
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Data de Atualização</span>
+          <span class="font-semibold text-slate-800 text-sm">2026-10-14</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Autor / Responsável</span>
+          <span class="font-semibold text-slate-800 text-sm">Seu Nome</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Cliente / Contexto</span>
+          <span class="font-semibold text-slate-800 text-sm">Knowledge OS</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Versão</span>
+          <span class="font-semibold text-slate-800 text-sm">v2.0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="space-y-6 text-base text-slate-700 leading-relaxed">
+      <div class="flex flex-wrap gap-2 my-3"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/80">Padrão Arquitetural</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/80">Governança de IA</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/80">Ativo</span></div>
+
+<h2>Visão Geral &amp; Objetivo</h2>
+<p>Este documento é a <strong>referência técnica mandatória</strong> para os Agentes de IA (Google Antigravity e Claude) e desenvolvedores ao planejar novos projetos, desenhar arquiteturas de software, orquestrar bots ou especificar soluções técnicas no repositório.</p>
+<p>A stack homologada consolida <strong>9 pilares tecnológicos</strong> auditados e validados em pesquisas aprofundadas, combinando baixo custo operacional, alta escalabilidade, conformidade com DevSecOps e máxima eficiência no consumo de tokens para agentes autônomos.</p>
+
+<div class="mermaid-wrapper">
+  <pre class="mermaid">
+flowchart TD
+    subgraph GOV["1. Governança & Disciplina de IA"]
+        direction LR
+        S1["Agent Skills (Addy Osmani)<br/>SDLC, TDD & Anti-Rationalization"]
+    end
+
+    subgraph CLOUD_SEC["2. Infraestrutura, Dados & Segurança"]
+        direction LR
+        T1["Shard Cloud<br/>Hospedagem VPS/Containers (R$ 21/mês)"]
+        T2["Aikido Security<br/>DevSecOps, SAST, DAST & PR Gating"]
+        T8["DBX (Rust/Tauri 2)<br/>MCP Data Layer & 100+ DBs (25 MB)"]
+    end
+
+    subgraph WEB_AUTOMATION["3. Interação Web & Dados"]
+        direction LR
+        T3["Playwright CLI<br/>Testes E2E & Validação Leve (-80% tokens)"]
+        T4["Apify MCP & Actors<br/>Scraping Massivo & Bypass Anti-Bot"]
+    end
+
+    subgraph MEDIA_PROD["4. Mídia, Design & Operação"]
+        direction LR
+        T5["HyperFrames (HeyGen)<br/>Vídeo Programático HTML/CSS/GSAP"]
+        T6["Artcraft / Crafting Apps<br/>Pipeline de Artes & Design Assets"]
+        T7["Google Workspace MCP<br/>E-mail, Calendar, Docs & Sheets"]
+    end
+
+    GOV --> CLOUD_SEC
+    CLOUD_SEC --> WEB_AUTOMATION
+    WEB_AUTOMATION --> MEDIA_PROD
+  </pre>
+</div>
+
+<hr />
+<h2>1. Matriz de Decisão Arquitetural (Stack Homologada)</h2>
+<p>Ao planejar qualquer sistema, robô ou produto, consulte a tabela para selecionar os componentes padrão:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Domínio do Projeto</th>
+<th style="text-align: left;">Tecnologia Homologada</th>
+<th style="text-align: left;">Função Técnica Primária</th>
+<th style="text-align: left;">Custo Base</th>
+<th style="text-align: left;">Documento de Referência</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Infraestrutura em Nuvem &amp; Backend</strong></td>
+<td style="text-align: left;"><strong>Shard Cloud</strong> (<code>shardcloud.app</code>)</td>
+<td style="text-align: left;">Hospedagem de APIs (FastAPI/Node), workers de background, webhooks e bots em containers de alta performance.</td>
+<td style="text-align: left;">R$ 21,00/mês</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-plataforma-shardcloud.html">Análise Shard Cloud</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Segurança DevSecOps &amp; CI/CD</strong></td>
+<td style="text-align: left;"><strong>Aikido Security</strong> (<code>aikido.dev</code>)</td>
+<td style="text-align: left;">Varredura contínua de vulnerabilidades (SAST/DAST), secrets scanning (<code>.env</code>), auditoria de containers e bloqueio de PRs vulneráveis no GitHub.</td>
+<td style="text-align: left;">Gratuito (Free) / ~$15 dev</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-plataforma-aikido-security.html">Análise Aikido Security</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Geração de Imagens &amp; Design Assets</strong></td>
+<td style="text-align: left;"><strong>Artcraft / Crafting Apps / Storytold</strong></td>
+<td style="text-align: left;">Criação, curadoria e geração automatizada de ilustrações, texturas, sprites, miniaturas e design visual.</td>
+<td style="text-align: left;">Varia por tier</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-artcraft-crafting-apps-storytold.html">Análise Artcraft &amp; Crafting Apps</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Produção de Vídeo Programático</strong></td>
+<td style="text-align: left;"><strong>HyperFrames (HeyGen)</strong></td>
+<td style="text-align: left;">Compilação determinística de vídeos MP4 via HTML, CSS/Tailwind e GSAP executada via CLI ou pipeline autônoma de IA.</td>
+<td style="text-align: left;">100% Gratuito ($0 local)</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-ferramentas-agentes-ia.html">Análise Ferramentas de IA</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Produtividade &amp; Handshake Comercial</strong></td>
+<td style="text-align: left;"><strong>Google Workspace (MCP / APIs)</strong></td>
+<td style="text-align: left;">Integração de formulários de discovery (Forms), minutas de contratos (Docs), CRM de dados (Sheets) e reuniões (Calendar/Meet).</td>
+<td style="text-align: left;">~$6 a $14/usuário/mês</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-ferramentas-agentes-ia.html">Análise Ferramentas de IA</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Web Scraping Massivo &amp; Anti-Bot</strong></td>
+<td style="text-align: left;"><strong>Apify (Cloud Actors &amp; MCP)</strong></td>
+<td style="text-align: left;">Mineração de dados externos, contorno de proteções Cloudflare/CAPTCHA e acesso a catálogo de +7.000 raspadores na nuvem.</td>
+<td style="text-align: left;">Free ($5 crédito) / $49 mês</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-ferramentas-agentes-ia.html">Análise Ferramentas de IA</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Governança SDLC &amp; Disciplina de IA</strong></td>
+<td style="text-align: left;"><strong>Agent Skills (Addy Osmani)</strong></td>
+<td style="text-align: left;">Metodologia mandatória de engenharia: TDD, tabelas anti-racionalização, dúvida epistêmica e progressive disclosure em <code>.agents/skills/</code>.</td>
+<td style="text-align: left;">100% Gratuito ($0)</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-ferramentas-agentes-ia.html">Análise Ferramentas de IA</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Navegação Web Leve &amp; Testes E2E</strong></td>
+<td style="text-align: left;"><strong>Playwright CLI (<code>@playwright/cli</code>)</strong></td>
+<td style="text-align: left;">Interação autônoma com navegadores locais, auditoria visual responsiva e criação de testes de ponta a ponta com economia de 80% de tokens.</td>
+<td style="text-align: left;">100% Gratuito ($0)</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-ferramentas-agentes-ia.html">Análise Ferramentas de IA</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Bancos de Dados &amp; MCP Data Layer</strong></td>
+<td style="text-align: left;"><strong>DBX (<code>t8y2/dbx</code>)</strong></td>
+<td style="text-align: left;">Cliente universal ultra-leve em Rust/Tauri 2 (25 MB) com suporte a 100+ bancos e servidor MCP seguro para agentes de IA inspecionarem schemas e queries.</td>
+<td style="text-align: left;">100% Gratuito ($0 / Open Source)</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-dbx-database-client-mcp.html">Pesquisa Técnica DBX</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Memória Contínua de Agentes</strong></td>
+<td style="text-align: left;"><strong>OptMem Pattern</strong></td>
+<td style="text-align: left;">Prompt bounded de 426 tokens para persistência de estado e memória episódica sem infraestrutura de banco vetorial.</td>
+<td style="text-align: left;">100% Gratuito ($0)</td>
+<td style="text-align: left;"><a href="../projetos/plano-acao-integracao-ferramentas-starred.html">Plano de Integração</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Utilitários JavaScript/TypeScript</strong></td>
+<td style="text-align: left;"><strong>es-toolkit (<code>toss/es-toolkit</code>)</strong></td>
+<td style="text-align: left;">Biblioteca utilitária moderna para microsserviços Node/TS (2-3x mais rápida e até 97% menor que o Lodash).</td>
+<td style="text-align: left;">100% Gratuito ($0 / MIT)</td>
+<td style="text-align: left;"><a href="../projetos/pesquisas/analise-ferramentas-starred-github.html">Pesquisa Técnica Stars</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Diretrizes de Aplicação por Tipo de Projeto</h2>
+<div class="callout callout-info"><strong class="block font-semibold mb-1">Regra de Ouro do Planejamento</strong><div class="text-sm opacity-90"><p>Nenhum projeto de engenharia ou produto deve planejar infraestrutura do zero sem primeiro avaliar o aproveitamento direto dessa stack homologada.</p></div></div>
+
+<h3>2.1 Projetos de Automação de Mídia e Conteúdo (ex: Vídeos Dark, Redes Sociais)</h3>
+<ul>
+<li><strong>Vídeo</strong>: Usar estritamente <strong>HyperFrames</strong> para renderização via HTML/CSS/GSAP determinístico.</li>
+<li><strong>Artes e Capas</strong>: Usar <strong>Artcraft / Storytold / photocraft-cli</strong> para miniaturas e ilustrações.</li>
+<li><strong>Inteligência de Pautas</strong>: Acionar <strong>Apify MCP</strong> para raspagem contínua de vídeos outliers no YouTube/TikTok sem risco de ban de IP.</li>
+</ul>
+<h3>2.2 Projetos de Software Distribuído e Desktop (ex: Cliente DePIN Robux)</h3>
+<ul>
+<li><strong>Backend &amp; APIs</strong>: Hospedar endpoints FastAPI e ledgers na <strong>Shard Cloud</strong> por R$ 21/mês.</li>
+<li><strong>DevSecOps</strong>: Conectar o repositório ao <strong>Aikido Security</strong> no GitHub para PR Gating obrigatório contra vazamento de segredos e falhas de dependências.</li>
+<li><strong>Governança de Código com Programadores Independentes</strong>: Aplicar as <strong>Agent Skills</strong> (Addy Osmani) no repositório, garantindo TDD e impedindo commits sem cobertura de testes.</li>
+</ul>
+<h3>2.3 Projetos Comerciais e SaaS da Triade (ex: Somos1 Tattoo Studio)</h3>
+<ul>
+<li><strong>Onboarding Comercial</strong>: Integrar <strong>Google Forms</strong> + <strong>Google Docs</strong> para gerar contratos assináveis e agendamento automático no <strong>Google Calendar</strong>.</li>
+<li><strong>Testes do Fluxo de Venda</strong>: Criar suítes de testes E2E com <strong>Playwright CLI</strong> para validar o modal de agendamento online e o checkout PIX em dispositivos móveis.</li>
+<li><strong>Segurança da Plataforma</strong>: Blindar o Supabase e as APIs via <strong>Aikido Security</strong>.</li>
+</ul>
+<h3>2.4 Demandas de Produto e Clientes da Empresa (ex: Atlântica Hotels, ConsultasPortal)</h3>
+<ul>
+<li><strong>Depuração de Telas e Formulários</strong>: Empregar <strong>Playwright CLI</strong> no terminal para simular navegações no Lecom BPM e isolar bugs de JavaScript em minutos.</li>
+<li><strong>Comunicação com Stakeholders de Negócio (David Oliveira)</strong>: Usar o <strong>Google Workspace</strong> (Google Sheets) para consolidar painéis em linguagem puramente de negócios.</li>
+<li><strong>Governança de Tarefas de Produto</strong>: Seguir o modelo de fatiamento vertical das <strong>Agent Skills</strong> para alterações de ETL e Kubernetes.</li>
+</ul>
+<h3>2.5 Diretrizes de Minimalismo Arquitetural &amp; Anti-Bloat (YAGNI)</h3>
+<ul>
+<li><strong>Prevenção de Inchaço no Repositório</strong>: Proibido instalar runtimes pesados (PyTorch/CUDA/HuggingFace) ou containers Docker permanentes no repositório de anotações.</li>
+<li><strong>Memória de Agentes Ultracompacta</strong>: Adotar o padrão <strong>OptMem</strong> (<code>.agents/skills/optmem-pattern/</code>) com arquivos textuais de ~426 tokens em vez de clusters vetoriais dedicados.</li>
+<li><strong>Padrão de Utilitários Node/TS</strong>: Em microsserviços e scripts JavaScript/TypeScript, usar estritamente o <strong>es-toolkit</strong> em substituição ao Lodash.</li>
+<li><strong>Isolamento de CLIs de Host</strong>: Utilitários como Fabric e Monolith pertencem ao sistema operacional do desenvolvedor, nunca à raiz do projeto.</li>
+</ul>
+<hr />
+<h2>3. Aplicação Direta no Próprio Repositório (Second Brain)</h2>
+<p>Além de orientar o desenvolvimento de sistemas externos, essas tecnologias possuem aplicação imediata na operação, governança e automação deste repositório:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Ferramenta</th>
+<th style="text-align: left;">Aplicação Prática no Repositório</th>
+<th style="text-align: left;">Benefício Concreto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Agent Skills (Addy Osmani)</strong></td>
+<td style="text-align: left;">Implementação de tabelas anti-racionalização e portões de verificação no hub <code>.agents/skills/</code>.</td>
+<td style="text-align: left;">Impede que agentes ignorem as 18 diretrizes do <code>AGENTS.md</code> ou pulem os linters e validadores do Second Brain.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Playwright CLI (<code>@playwright/cli</code>)</strong></td>
+<td style="text-align: left;">Inspeção visual headless dos componentes MDX (<code>components/</code>) e checagem de renderização de páginas HTML pré-PDF.</td>
+<td style="text-align: left;">Validação visual de diagramas Mermaid e componentes React com altíssima economia de tokens de contexto.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Aikido Security (<code>aikido.dev</code>)</strong></td>
+<td style="text-align: left;">Conexão do repositório ao GitHub com varredura contínua de segredos (secrets scanning) e SAST nos scripts Python (<code>scripts/</code>).</td>
+<td style="text-align: left;">Garante que chaves de API (tokens do ClickUp, credenciais e <code>.env</code>) nunca sejam commitadas no repositório.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Google Workspace (MCP / APIs)</strong></td>
+<td style="text-align: left;">Ingestão automática de atas recebidas por e-mail ou Google Docs via <code>meeting-to-knowledge</code> e upload de relatórios semanais no Drive.</td>
+<td style="text-align: left;">Automatiza a entrada de notas brutas e facilita a distribuição de PDFs compilados para equipes externas.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Apify (Cloud Actors &amp; MCP)</strong></td>
+<td style="text-align: left;">Motor de pesquisa para agentes quando solicitados a produzir novas análises de mercado em <code>projetos/pesquisas/</code>.</td>
+<td style="text-align: left;">Elimina a limitação de busca básica, extraindo dados ricos de portais, fóruns e documentações web.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Shard Cloud (<code>shardcloud.app</code>)</strong></td>
+<td style="text-align: left;">Hospedagem de um bot serverless contínuo ou webhook do repositório rodando em container por R$ 21,00/mês.</td>
+<td style="text-align: left;">Permite compilação de PDFs em nuvem, triggers automáticos via GitHub Actions e bots de consulta RAG 24/7.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Artcraft / Storytold</strong></td>
+<td style="text-align: left;">Geração de artes visuais, ilustrações conceituais e retratos para a pasta de RPG (<a href="../rpg/"><code>rpg/</code></a>) e capas de relatórios.</td>
+<td style="text-align: left;">Enriquecimento visual de dossiês e manuais de RPG no formato oficial de livro de regras.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>HyperFrames (HeyGen)</strong></td>
+<td style="text-align: left;">Compilação de pequenos vídeos demonstrativos de novos componentes React ou changelogs da base de notas.</td>
+<td style="text-align: left;">Criação de changelogs animados em vídeo diretamente a partir do histórico de <code>MEMORY.md</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>DBX (<code>t8y2/dbx</code>)</strong></td>
+<td style="text-align: left;">Servidor MCP nativo (<code>@dbx-app/mcp-server</code>) para que agentes de IA consultem bases locais SQLite, DuckDB e PostgreSQL/Supabase.</td>
+<td style="text-align: left;">Permite que os agentes inspecionem schemas e realizem queries em modo <code>read_only</code> sem alucinação de dados.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OptMem Pattern</strong></td>
+<td style="text-align: left;">Padrão textual de retenção de memória em <code>.agents/skills/optmem-pattern/</code> para subagentes locais.</td>
+<td style="text-align: left;">Memória episódica com custo de apenas ~426 tokens sem exigir banco vetorial local.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>es-toolkit (<code>toss/es-toolkit</code>)</strong></td>
+<td style="text-align: left;">Padronização de utilitários em scripts e pacotes Node.js/TypeScript.</td>
+<td style="text-align: left;">Redução de até 97% no bundle e maior velocidade de execução que o Lodash.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Linha do Tempo (Atualizações Cronológicas)</h2>
+<div class="timeline mt-6">
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm font-mono">2026-10-14</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200">Concluído</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Homologação do Padrão OptMem, es-toolkit e Regras Anti-Bloat</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Instituição formal do OptMem para memória de agentes, adoção do es-toolkit em TypeScript e diretrizes estritas contra inchaço técnico no repositório.</p>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm font-mono">2026-10-14</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200">Concluído</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Inclusão do DBX como 9º Pilar da Stack Homologada</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Homologação oficial do DBX (Rust/Tauri 2) como camada padrão de dados e MCP Server para conexões multi-bancos e consultas seguras de agentes de IA.</p>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm font-mono">2026-10-14</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200">Concluído</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Mapeamento de Aplicação Direta no Repositório</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Detalhamento de como os 8 pilares da stack homologada são aplicados na infraestrutura interna, governança, segurança e enriquecimento do Second Brain.</p>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm font-mono">2026-10-14</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200">Concluído</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Formalização da Stack Homologada do Repositório</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Consolidação dos 8 pilares tecnológicos oficiais para planejamento de projetos: Shard Cloud, Aikido Security, Artcraft, HyperFrames, Google Workspace, Apify, Agent Skills e Playwright CLI.</p>
+  </div>
+</div>
+
+<hr />
+<h2>Assuntos Relacionados</h2>
+<ul>
+<li><a href="../projetos/pesquisas/analise-ferramentas-agentes-ia.html">Análise Comparativa: Ferramentas de Ecossistema para Agentes de IA</a></li>
+<li><a href="../projetos/pesquisas/analise-plataforma-shardcloud.html">Análise Profunda &amp; Avaliação: Plataforma Shard Cloud</a></li>
+<li><a href="../projetos/pesquisas/analise-plataforma-aikido-security.html">Análise Profunda &amp; Avaliação: Plataforma Aikido Security</a></li>
+<li><a href="../projetos/pesquisas/analise-artcraft-crafting-apps-storytold.html">Análise Profunda &amp; Guia de Automação: Suíte ArtCraft &amp; Storytold</a></li>
+<li><a href="./TEMPLATE_PROJETO_TRIADE.html">Template Oficial de Projetos Triade</a></li>
+<li><a href="../AGENTS.md">Guia Mestre de Diretrizes dos Agentes</a></li>
+</ul>
+    </main>
+
+    <!-- Rodapé Corporativo -->
+    <footer class="mt-16 pt-6 border-t border-slate-200 flex justify-between items-center text-xs text-slate-400">
+      <span>Agentic Knowledge OS • Artefato de Documentação Técnica</span>
+      <span>00 Meta</span>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Inicializar Mermaid
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'base',
+          themeVariables: {
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontSize: '14px',
+            primaryColor: '#f0f9ff',
+            primaryBorderColor: '#0284c7',
+            primaryTextColor: '#0c4a6e',
+            lineColor: '#64748b',
+            secondaryColor: '#f8fafc',
+            tertiaryColor: '#ffffff',
+            edgeLabelBackground: '#ffffff',
+            clusterBkg: '#f8fafc',
+            clusterBorder: '#cbd5e1'
+          },
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+            nodeSpacing: 45,
+            rankSpacing: 50,
+            padding: 20
+          },
+          securityLevel: 'loose'
+        });
+      }
+
+      // Inicializar KaTeX apenas para fórmulas explícitas
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError : false
+        });
+      }
+    });
+  </script>
+</body>
+</html>

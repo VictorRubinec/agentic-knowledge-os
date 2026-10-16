@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template de Tarefa & Acompanhamento de Execução — Documentação Técnica</title>
+  <!-- Tailwind CSS com plugin de Tipografia via CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <!-- Mermaid.js para diagramas nativos -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- KaTeX para fórmulas matemáticas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      line-height: 1.65;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Tipografia e Hierarquia do Conteúdo */
+    main h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.025em;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    main h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    main h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+    main h4 {
+      font-size: 1.0rem;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 1.25rem;
+      margin-bottom: 0.35rem;
+    }
+    main p {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: #334155;
+      line-height: 1.7;
+    }
+    main ul:not(.custom-list) {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    main ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    main li {
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
+      color: #334155;
+    }
+    main hr {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      border: 0;
+      border-top: 1px solid #e2e8f0;
+    }
+    main code:not(pre code) {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+      font-size: 0.85em;
+      font-weight: 500;
+      border: 1px solid #e2e8f0;
+    }
+    main a {
+      color: #0284c7;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 500;
+    }
+    main a:hover {
+      color: #0369a1;
+    }
+
+    /* Checkboxes de Tarefas e Remoção de Marcadores Duplicados */
+    main ul:has(.task-checkbox), main ul.list-none, main ul.custom-list {
+      list-style-type: none !important;
+      padding-left: 0.25rem !important;
+    }
+    main li:has(> .task-checkbox) {
+      list-style-type: none !important;
+      display: flex;
+      align-items: flex-start;
+      margin-top: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .task-checkbox {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      line-height: 1;
+      margin-right: 0.5rem;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .task-checkbox.checked {
+      color: #10b981;
+    }
+    .task-checkbox.unchecked {
+      color: #94a3b8;
+    }
+
+    /* Componentes Semânticos */
+    .callout {
+      border-left-width: 4px;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .callout-info { background-color: #f0f9ff; border-color: #0284c7; color: #0c4a6e; }
+    .callout-warn { background-color: #fffbeb; border-color: #f59e0b; color: #78350f; }
+    .callout-danger { background-color: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #14532d; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      border-left: 2px solid #e2e8f0;
+      margin-left: 12px;
+      padding-left: 24px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -31px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #0284c7;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 0 2px #0284c7;
+    }
+
+    /* Diagramas Mermaid Otimizados */
+    .mermaid-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 28px 0;
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px 16px;
+      overflow-x: auto;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+    .mermaid .node rect, .mermaid .node polygon {
+      stroke-width: 2px !important;
+      rx: 8px !important;
+      ry: 8px !important;
+    }
+    .mermaid .label {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      line-height: 1.4 !important;
+    }
+    .mermaid .edgeLabel {
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      background: #ffffff !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* Estilização de Tabelas */
+    table {
+      width: 100%;
+      margin: 24px 0;
+      border-collapse: collapse;
+      font-size: 0.9em;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid #e2e8f0;
+      color: #334155;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+    }
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Regras de Impressão e PDF */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 14mm 14mm 16mm 14mm;
+      }
+
+      body {
+        background-color: #ffffff !important;
+        font-size: 9.5pt;
+        color: #0f172a !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .document-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      h1, h2, h3, h4, .header-cover {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      .avoid-break, .callout, .card, .timeline-item, table, .mermaid-wrapper {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .page-break {
+        page-break-before: always;
+        break-before: always;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Container Principal Fluido (Estilo Web / Documento Natural) -->
+  <div class="document-container max-w-4xl mx-auto px-6 py-8 sm:px-12 sm:py-12">
+    <!-- Header Cover Corporativo -->
+    <header class="header-cover border-b border-slate-200 pb-8 mb-8">
+      <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+        <span class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+          Trabalho • Empresa • Produto • Tarefas
+        </span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          ATIVO
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+        Template de Tarefa & Acompanhamento de Execução
+      </h1>
+
+      <!-- Grade de Metadados -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200/80 text-xs mt-6">
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Data de Atualização</span>
+          <span class="font-semibold text-slate-800 text-sm">2026-10-13</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Autor / Responsável</span>
+          <span class="font-semibold text-slate-800 text-sm">Seu Nome</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Cliente / Contexto</span>
+          <span class="font-semibold text-slate-800 text-sm">Knowledge OS</span>
+        </div>
+        <div>
+          <span class="block text-slate-400 font-medium uppercase text-[10px] tracking-wider">Versão</span>
+          <span class="font-semibold text-slate-800 text-sm">v2.0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="space-y-6 text-base text-slate-700 leading-relaxed">
+      <div class="flex flex-wrap gap-2 my-3"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/80">Engenharia de Produto</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/80">Status: Em Andamento</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200/80">Prioridade: Alta</span></div>
+
+<h2>Visão Geral &amp; Metadados ClickUp</h2>
+<p>Descrição concisa do objetivo desta tarefa, o problema que resolve e a motivação inicial.</p>
+<ul>
+<li><strong>ClickUp ID</strong>: <code>[ID_CLICKUP]</code> | <strong>Link</strong>: <a href="https://app.clickup.com/t/...">Abrir no ClickUp</a></li>
+<li><strong>Lista / Pasta</strong>: <code>Portal</code> &gt; <code>ETL</code></li>
+<li><strong>Responsável / Executor</strong>: Seu Nome</li>
+<li><strong>Prazo Estimado</strong>: DD/MM/AAAA</li>
+<li><strong>Objetivo Central</strong>: Definição de sucesso mensurável.</li>
+</ul>
+<hr />
+<h2>1. Parecer Técnico &amp; Análise Inicial da IA</h2>
+<div class="callout callout-info"><strong class="block font-semibold mb-1">Análise Automatizada de Engenharia</strong><div class="text-sm opacity-90"><p>Diagnóstico preliminar gerado automaticamente no recebimento/atribuição da tarefa no ClickUp.</p></div></div>
+
+<h3>1.1 Diagnóstico do Problema</h3>
+<p>Resumo técnico da causa-raiz ou requisito de negócio extraído da descrição e das discussões do card.</p>
+<h3>1.2 Impacto Arquitetural no Ecossistema Empresa</h3>
+<ul>
+<li><strong>Módulos Afetados</strong>: (ex: <code>etl-piloto</code>, <code>portal-bff</code>, <code>luxia-multi-tenant</code>, <code>schemas-gold</code>).</li>
+<li><strong>Riscos &amp; Pontos Críticos</strong>: Cuidados com isolamento multi-tenant, concorrência, idempotência ou quebra de contratos de API.</li>
+</ul>
+<h3>1.3 Checklist Técnico Recomendado (Plano de Ação Sugerido)</h3>
+<ul>
+<li><span class="task-checkbox unchecked">☐</span> Passo 1: Inspeção de código e logs nos repositórios relevantes.</li>
+<li><span class="task-checkbox unchecked">☐</span> Passo 2: Implementação cirúrgica com foco na regra de negócio.</li>
+<li><span class="task-checkbox unchecked">☐</span> Passo 3: Testes unitários/integração locais (Docker/WSL).</li>
+<li><span class="task-checkbox unchecked">☐</span> Passo 4: Atualização de documentação e validação de homologação.</li>
+</ul>
+<hr />
+<h2>2. Escopo Inicial &amp; Requisitos</h2>
+<h3>2.1 O que DEVE ser feito (In Scope)</h3>
+<ul>
+<li><span class="task-checkbox unchecked">☐</span> Entregável 1: Descrição detalhada do que será construído.</li>
+<li><span class="task-checkbox unchecked">☐</span> Entregável 2: Requisito técnico ou operacional.</li>
+<li><span class="task-checkbox unchecked">☐</span> Entregável 3: Testes e validações necessárias.</li>
+</ul>
+<h3>2.2 O que NÃO faz parte (Out of Scope)</h3>
+<ul>
+<li>O que não será coberto nesta iteração para evitar aumento descontrolado de escopo (<em>scope creep</em>).</li>
+</ul>
+<h3>2.3 Critérios de Aceite (Definition of Done - DoD)</h3>
+<ul>
+<li><span class="task-checkbox unchecked">☐</span> Código compilando e sem erros de lint/tipagem.</li>
+<li><span class="task-checkbox unchecked">☐</span> Testes executados e validados.</li>
+<li><span class="task-checkbox unchecked">☐</span> Documentação e histórico atualizados.</li>
+</ul>
+<hr />
+<h2>3. Planejamento &amp; Arquitetura Visual</h2>
+
+<div class="mermaid-wrapper">
+  <pre class="mermaid">
+flowchart LR
+    A["Etapa 1<br/>Investigação & Setup"] --> B["Etapa 2<br/>Desenvolvimento"] --> C["Etapa 3<br/>Validação & Entrega"]
+
+    style A fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style B fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#fff
+    style C fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
+  </pre>
+</div>
+
+<hr />
+<h2>4. Registro do Processo de Execução</h2>
+<p>Documentação contínua de descobertas, decisões tomadas, comandos executados e alterações de rumo durante o desenvolvimento.</p>
+<h3>4.1 Descobertas Técnicas &amp; Decisões</h3>
+<ul>
+<li><strong>Decisão 1</strong>: Por que foi escolhida a abordagem X em vez de Y.</li>
+<li><strong>Descoberta 2</strong>: Nuance identificada no ambiente ou dependência.</li>
+</ul>
+<h3>4.2 Tabela de Ações &amp; Comandos Relevantes</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Fase</th>
+<th style="text-align: left;">Ação Executada</th>
+<th style="text-align: left;">Artefato / Arquivo</th>
+<th style="text-align: left;">Resultado Obtido</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Investigação</td>
+<td style="text-align: left;">Mapeamento de dependências</td>
+<td style="text-align: left;"><code>package.json</code></td>
+<td style="text-align: left;">Versões alinhadas</td>
+</tr>
+<tr>
+<td style="text-align: left;">Construção</td>
+<td style="text-align: left;">Implementação do módulo</td>
+<td style="text-align: left;"><code>src/index.ts</code></td>
+<td style="text-align: left;">Testes locais passando</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-info"><strong class="block font-semibold mb-1">Ponto de Atenção / Bloqueio Superado</strong><div class="text-sm opacity-90"><p>Caso ocorra algum impedimento, descreva aqui o sintoma, a causa identificada e a solução contornada.</p></div></div>
+
+<hr />
+<h2>5. Evolução &amp; Próximos Passos</h2>
+<ul>
+<li><strong>Status Atual</strong>: Onde o trabalho parou na sessão atual.</li>
+<li><strong>Próximas Ações</strong>:</li>
+<li><span class="task-checkbox unchecked">☐</span> Passo imediato para a próxima retomada.</li>
+<li><span class="task-checkbox unchecked">☐</span> Homologação ou entrega final no ClickUp.</li>
+</ul>
+<hr />
+<h2>Linha do Tempo (Rastreamento Cronológico)</h2>
+<blockquote>
+<p><strong>Regra de Ouro</strong>: Adicione cada avanço, mudança de status ou sessão de trabalho aqui para preservar o histórico vivo e sem perda de contexto.</p>
+</blockquote>
+<div class="timeline mt-6">
+
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-slate-800 text-sm">2026-10-13</span>
+      <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">Início</span>
+    </div>
+    <h4 class="font-semibold text-slate-900 text-base">Kickoff e Análise Inicial Automatizada da IA</h4>
+    <p class="text-sm text-slate-600 mt-0.5">Atribuição da tarefa no ClickUp, extração dos requisitos técnicos e geração da análise preliminar de arquitetura.</p>
+  </div>
+</div>
+
+<hr />
+<h2>Assuntos Relacionados</h2>
+<ul>
+<li><a href="../trabalho/tarefas/README.mdx">Painel Central de Tarefas (Engenharia de Produto)</a></li>
+<li><a href="TEMPLATE_NOTA.mdx">Template Geral de Notas</a></li>
+</ul>
+    </main>
+
+    <!-- Rodapé Corporativo -->
+    <footer class="mt-16 pt-6 border-t border-slate-200 flex justify-between items-center text-xs text-slate-400">
+      <span>Agentic Knowledge OS • Artefato de Documentação Técnica</span>
+      <span>Trabalho • Empresa • Produto • Tarefas</span>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Inicializar Mermaid
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'base',
+          themeVariables: {
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontSize: '14px',
+            primaryColor: '#f0f9ff',
+            primaryBorderColor: '#0284c7',
+            primaryTextColor: '#0c4a6e',
+            lineColor: '#64748b',
+            secondaryColor: '#f8fafc',
+            tertiaryColor: '#ffffff',
+            edgeLabelBackground: '#ffffff',
+            clusterBkg: '#f8fafc',
+            clusterBorder: '#cbd5e1'
+          },
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+            nodeSpacing: 45,
+            rankSpacing: 50,
+            padding: 20
+          },
+          securityLevel: 'loose'
+        });
+      }
+
+      // Inicializar KaTeX apenas para fórmulas explícitas
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError : false
+        });
+      }
+    });
+  </script>
+</body>
+</html>
