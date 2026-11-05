@@ -400,6 +400,57 @@ def build_preset_tarefa(data_hoje):
     return "\n\n".join(partes)
 
 
+def build_preset_pesquisa_tecnica(data_hoje):
+    partes = [
+        """      <!-- Seção 1: Resumo Executivo & Proposta de Valor -->
+      <section class="mb-10">
+        <h2>1. Resumo Executivo & Proposta de Valor</h2>
+        <div class="callout callout-info mb-6">
+          <p class="font-semibold text-sky-900 mb-1">🎯 Objetivo da Investigação Técnica</p>
+          <p class="text-sky-800 text-sm leading-relaxed">
+            Investigação técnica aprofundada, análise de arquitetura e viabilidade de adoção no ecossistema do Knowledge OS.
+          </p>
+        </div>
+      </section>""",
+        """      <!-- Seção 2: Arquitetura e Engenharia Reversa -->
+      <section class="mb-10">
+        <h2>2. Arquitetura e Engenharia Reversa</h2>
+        <p>Análise de componentes internos, topologia de execução e bibliotecas base.</p>
+      </section>""",
+        """      <!-- Seção 3: Resposta aos Requisitos Específicos -->
+      <section class="mb-10">
+        <h2>3. Resposta aos Requisitos e Dúvidas Técnicas</h2>
+        <div class="callout callout-warn mb-6">
+          <p class="font-semibold text-amber-900 mb-1">Foco da Demanda do Usuário</p>
+          <p class="text-amber-800 text-sm leading-relaxed">
+            Avaliação de aplicabilidade, casos de uso reais e resposta direta às dúvidas levantadas.
+          </p>
+        </div>
+      </section>""",
+        """      <!-- Seção 4: Análise de Viabilidade & Quadro Comparativo -->
+      <section class="mb-10">
+        <h2>4. Análise de Viabilidade & Comparativo de Mercado</h2>
+        <p>Avaliação de trade-offs, requisitos de infraestrutura e comparação com alternativas consolidadas.</p>
+      </section>""",
+        """      <!-- Seção 5: Guia Prático de Implementação (PoC) -->
+      <section class="mb-10">
+        <h2>5. Guia Prático de Execução & Prova de Conceito (PoC)</h2>
+        <p>Instruções passo a passo e comandos mínimos funcionais para testes locais.</p>
+      </section>""",
+        """      <!-- Seção 6: Veredito Técnico -->
+      <section class="mb-10">
+        <h2>6. Veredito Técnico do Antigravity</h2>
+        <div class="callout callout-success">
+          <p class="font-semibold text-emerald-900 mb-1">⚖️ Conclusão da Investigação:</p>
+          <p class="text-emerald-800 text-sm leading-relaxed">Avaliação final de maturidade e recomendação de uso.</p>
+        </div>
+      </section>""",
+        build_bloco_timeline("7. Linha do Tempo da Investigação", data_hoje),
+        build_bloco_relacionados("8. Assuntos Relacionados & Links Cruzados")
+    ]
+    return "\n\n".join(partes)
+
+
 def gerar_documento(args):
     """Gera o arquivo HTML a partir do template e dos argumentos."""
     if not TEMPLATE_PATH.exists():
@@ -407,7 +458,7 @@ def gerar_documento(args):
         sys.exit(1)
 
     with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
-        template_content = f.read()
+        template_content = f.read().replace("\r\n", "\n")
 
     # Resolver dados do cabeçalho
     data_hoje_iso = args.data if args.data else datetime.now().strftime("%Y-%m-%d")
@@ -423,8 +474,20 @@ def gerar_documento(args):
     if tags_html:
         blocos_conteudo.append(tags_html)
 
+    # Injeção Direta de Conteúdo Personalizado (Passo Único)
+    if getattr(args, "conteudo_arquivo", None):
+        arquivo_conteudo = Path(args.conteudo_arquivo)
+        if not arquivo_conteudo.is_absolute():
+            arquivo_conteudo = ROOT_DIR / arquivo_conteudo
+        if not arquivo_conteudo.exists():
+            print(f"❌ Erro: Arquivo de conteúdo não encontrado: {arquivo_conteudo}")
+            sys.exit(1)
+        custom_text = arquivo_conteudo.read_text(encoding="utf-8").strip()
+        blocos_conteudo.append(custom_text)
+    elif getattr(args, "conteudo", None):
+        blocos_conteudo.append(args.conteudo.strip())
     # Preset selecionado
-    if args.preset == "plano-acao":
+    elif args.preset == "plano-acao":
         blocos_conteudo.append(build_preset_plano_acao(data_hoje_iso))
     elif args.preset == "nota-tecnica":
         blocos_conteudo.append(build_preset_nota_tecnica(data_hoje_iso))
@@ -432,6 +495,8 @@ def gerar_documento(args):
         blocos_conteudo.append(build_preset_relatorio_executivo(data_hoje_iso))
     elif args.preset == "tarefa":
         blocos_conteudo.append(build_preset_tarefa(data_hoje_iso))
+    elif args.preset == "pesquisa-tecnica":
+        blocos_conteudo.append(build_preset_pesquisa_tecnica(data_hoje_iso))
     else:
         # Modo modular via flags individuais
         if args.com_resumo:
@@ -449,6 +514,18 @@ def gerar_documento(args):
 
     content_str = "\n\n".join(blocos_conteudo)
 
+    # Tratar caminho de saída
+    out_path = Path(args.arquivo)
+    if not out_path.is_absolute():
+        out_path = ROOT_DIR / out_path
+
+    # Calcular caminho relativo para o Design System Canônico
+    ds_target = ROOT_DIR / "templates" / "assets" / "design-system.css"
+    try:
+        rel_ds = os.path.relpath(ds_target, out_path.parent).replace("\\", "/")
+    except Exception:
+        rel_ds = "templates/assets/design-system.css"
+
     # Substituição de Placeholders Oficiais
     doc = template_content
     doc = doc.replace("{{TITLE}}", args.titulo)
@@ -459,12 +536,8 @@ def gerar_documento(args):
     doc = doc.replace("{{AUTHOR}}", args.autor)
     doc = doc.replace("{{CLIENT}}", args.contexto)
     doc = doc.replace("{{VERSION}}", args.versao)
+    doc = doc.replace("{{DS_CSS_PATH}}", rel_ds)
     doc = doc.replace("{{CONTENT}}", content_str)
-
-    # Tratar caminho de saída
-    out_path = Path(args.arquivo)
-    if not out_path.is_absolute():
-        out_path = ROOT_DIR / out_path
 
     # Criar diretórios pais se não existirem
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -474,7 +547,7 @@ def gerar_documento(args):
         print("    Para sobrescrever, use a flag --force.")
         sys.exit(1)
 
-    with open(out_path, "w", encoding="utf-8") as f:
+    with open(out_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(doc)
 
     rel_path = out_path.relative_to(ROOT_DIR) if out_path.is_relative_to(ROOT_DIR) else out_path
@@ -515,8 +588,12 @@ def main():
     parser.add_argument("--tags", help="Tags separadas por vírgula (ex: 'Python,IA,Telegram')")
 
     # Presets Estruturais
-    parser.add_argument("--preset", choices=["plano-acao", "nota-tecnica", "relatorio-executivo", "tarefa"],
+    parser.add_argument("--preset", choices=["plano-acao", "nota-tecnica", "relatorio-executivo", "tarefa", "pesquisa-tecnica"],
                         help="Estrutura completa pré-configurada de seções")
+
+    # Injeção Direta de Conteúdo (Elimina necessidade de scripts secundários)
+    parser.add_argument("--conteudo", help="String com conteúdo HTML para injetar diretamente dentro de <main>")
+    parser.add_argument("--conteudo-arquivo", help="Caminho de arquivo contendo HTML a ser injetado diretamente dentro de <main>")
 
     # Injetores Modulares de Blocos Semânticos
     parser.add_argument("--com-resumo", action="store_true", help="Inclui Seção 1 com 3 cards de destaque")

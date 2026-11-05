@@ -1,0 +1,234 @@
+{
+  "title": "Consultoria do Coelho — Alinhamento e Refinamento da Landing Page",
+  "description": "Fala Coelho! O seu site já está no ar na primeira versão oficial (https://victorrubinec.github.io/coelho-dias-web/).\n\nEste formulário serve para você colocar as informações 100% corretas, validar textos, escolher detalhes de design e definir o fluxo da sua consultoria para deixarmos a página perfeita para você fechar novos alunos!\n\n⏱️ Tempo estimado: 5 minutos.",
+  "sections": [
+    {
+      "title": "🎨 Bloco 1: Escolhas de Design & Identidade Visual",
+      "description": "Opinião sobre a estética Dark Manga / Berserk e elementos visuais da página.",
+      "questions": [
+        {
+          "title": "1. O que achou do tema escuro (Dark Manga / Berserk com hachuras e luz vermelha)?",
+          "helpText": "Selecione o que melhor representa o visual que você quer para a sua marca.",
+          "type": "choice",
+          "options": [
+            "Gostei muito, quero manter 100% assim (Dark Manga / Berserk)",
+            "Prefiro manter escuro, mas mais limpo/minimalista (com menos detalhes de fundo)",
+            "Gostaria de testar outra cor de destaque além do vermelho (ex: dourado, laranja, azul)",
+            "Gostaria de ter uma opção de modo claro (Light Mode)"
+          ],
+          "required": true
+        },
+        {
+          "title": "2. Se você quiser mudar ou adicionar alguma cor de destaque, qual seria?",
+          "helpText": "Deixe em branco se aprovou a combinação Preto + Vermelho.",
+          "type": "text",
+          "required": false
+        },
+        {
+          "title": "3. Na foto principal de destaque da página (Hero), qual é a sua preferência?",
+          "type": "choice",
+          "options": [
+            "Manter a ilustração estilo mangá segurando o halter (como está hoje)",
+            "Trocar por uma foto real minha treinando em alta definição",
+            "Mesclar ambas: ilustração no topo (Hero) e fotos reais minhas na seção Quem Sou Eu"
+          ],
+          "required": true
+        },
+        {
+          "title": "4. O que achou dos botões e cartões chanfrados (com corte em 45° estilo lâmina/armadura)?",
+          "type": "choice",
+          "options": [
+            "Manter os recortes chanfrados agressivos (estilo único e marcante)",
+            "Prefiro cantos arredondados normais (padrão convencional)"
+          ],
+          "required": true
+        },
+        {
+          "title": "5. Sobre as referências ao mangá Berserk no site:",
+          "type": "choice",
+          "options": [
+            "O nível atual está perfeito (sutil, profissional e com personalidade)",
+            "Gostaria de referências mais diretas (ex: nomes de fases de treino, mais citações)",
+            "Prefiro reduzir as referências para um tom puramente neutro/tradicional"
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "📝 Bloco 2: Textos, Slogans & Comunicação",
+      "description": "Validação das mensagens, promessas e quebra de dúvidas frequentes.",
+      "questions": [
+        {
+          "title": "6. As frases e slogans principais representam bem o seu estilo?",
+          "helpText": "Frases atuais: 'DISCIPLINA É O QUE TE LEVA MAIS LONGE', 'Seu objetivo. Seu treino. Sua evolução' e 'Seu objetivo + Meu plano = Resultados Reais'.",
+          "type": "choice",
+          "options": [
+            "Sim, estão perfeitas e batem com o que acredito",
+            "Quero ajustar algumas palavras ou adicionar frases minhas"
+          ],
+          "required": true
+        },
+        {
+          "title": "7. Se você quiser alterar alguma frase ou adicionar algum bordão seu, escreva aqui:",
+          "type": "paragraph",
+          "required": false
+        },
+        {
+          "title": "8. Sobre a chamada de dieta: 'Sem terrorismo alimentar: coma seu docinho todo dia e ainda emagreça!'",
+          "type": "choice",
+          "options": [
+            "Manter exatamente assim (é chamativa e atrai quem tem medo de dieta restritiva)",
+            "Prefiro um tom mais técnico e formal (ex: 'Estratégia alimentar flexível sem restrições extremas')"
+          ],
+          "required": true
+        },
+        {
+          "title": "9. Tem alguma dúvida recorrente que os alunos sempre te mandam no direct para adicionarmos no FAQ do site?",
+          "helpText": "Ex: 'serve para quem nunca treinou?', 'como envio os vídeos de execução?', etc.",
+          "type": "paragraph",
+          "required": false
+        }
+      ]
+    },
+    {
+      "title": "💰 Bloco 3: Pacotes, Preços & Fluxo de Entrega do Serviço",
+      "description": "Validação dos valores e do processo de atendimento na prática.",
+      "questions": [
+        {
+          "title": "10. Os valores dos planos e da promoção de 50% a partir do 2º mês estão 100% corretos?",
+          "helpText": "Normal: R$ 200 -> R$ 100/mês | Plus: R$ 250 -> R$ 125/mês | Ultra Aluno: R$ 300 -> R$ 150/mês.",
+          "type": "choice",
+          "options": [
+            "Sim, os valores e descontos estão 100% corretos",
+            "Preciso alterar os valores de algum plano"
+          ],
+          "required": true
+        },
+        {
+          "title": "11. Caso queira alterar o valor de algum plano, detalhe aqui:",
+          "helpText": "Ex: Plano Ultra Aluno quero R$ 350 no 1º mês e R$ 175 a partir do 2º.",
+          "type": "paragraph",
+          "required": false
+        },
+        {
+          "title": "12. A promoção de 50% de desconto a partir do 2º mês tem alguma regra específica?",
+          "type": "choice",
+          "options": [
+            "Vale por todo o período que o aluno mantiver o acompanhamento ativo (sem cancelamento)",
+            "Exige um período mínimo de permanência (ex: fidelidade de 3 meses)",
+            "É válida apenas para os primeiros X alunos (ex: primeiras 10 vagas)"
+          ],
+          "required": true
+        },
+        {
+          "title": "13. Por onde o aluno recebe o treino e os vídeos de execução?",
+          "type": "choice",
+          "options": [
+            "Aplicativo dedicado de treino (MFIT, Tecnofit, Nexur, etc.)",
+            "Planilha interativa / PDF estruturado com links de vídeo",
+            "Envio as fichas e vídeos diretamente pelo WhatsApp",
+            "Outro formato"
+          ],
+          "required": true
+        },
+        {
+          "title": "14. Se você usa aplicativo de treino, qual é o nome do app?",
+          "type": "text",
+          "required": false
+        },
+        {
+          "title": "15. Para o Plano Ultra Aluno (com 2 aulas presenciais por semana), onde você atende?",
+          "helpText": "Informe cidade, bairro e/ou redes de academias parceiras onde você dá as aulas presenciais.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "16. Após o aluno pagar e responder a anamnese, em quanto tempo o protocolo fica pronto?",
+          "type": "choice",
+          "options": [
+            "Em até 24 a 48 horas úteis",
+            "Em até 72 horas úteis",
+            "Em até 5 dias úteis"
+          ],
+          "required": true
+        },
+        {
+          "title": "17. Quais formas de pagamento você aceita?",
+          "type": "checkbox",
+          "options": [
+            "PIX direto",
+            "Cartão de Crédito (Link de pagamento)",
+            "Assinatura recorrente mensal automática (sem comprometer o limite)",
+            "Boleto bancário"
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "👤 Bloco 4: Suas Informações Profissionais & Contato",
+      "description": "Dados para conectar os botões de ação e dar autoridade profissional ao site.",
+      "questions": [
+        {
+          "title": "18. Qual o nome oficial que você quer assinar no site?",
+          "helpText": "Ex: 'Coelho Dias', 'Personal Coelho', 'Gabriel Coelho'.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "19. Qual o seu número de registro profissional (CREF)?",
+          "helpText": "Se tiver ativo, informe o número completo com a UF. Se preferir não colocar agora, pode deixar em branco.",
+          "type": "text",
+          "required": false
+        },
+        {
+          "title": "20. Qual a sua formação e principais especialidades?",
+          "helpText": "Ex: Graduação em Educação Física, pós-graduação, cursos de Biomecânica, Nutrição Esportiva, Fisiculturismo, etc.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "21. Há quantos anos você treina musculação e há quanto tempo atua preparando alunos?",
+          "helpText": "Ex: 'Treino há 8 anos e atuo há 3 anos com consultoria e personal'.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "22. Qual o seu WhatsApp comercial com DDD?",
+          "helpText": "Número para onde os botões do site irão enviar as mensagens dos novos alunos prontos para fechar.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "23. Qual o @ oficial do seu Instagram e TikTok?",
+          "helpText": "Ex: @coelho_dias",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "💡 Bloco 5: Novas Ideias & Recursos Extras para o Site",
+      "description": "Ideias interativas que podemos programar no site para você encantar e reter mais alunos.",
+      "questions": [
+        {
+          "title": "24. Quais desses recursos você gostaria de ver implementados no site?",
+          "type": "checkbox",
+          "options": [
+            "Calculadora interativa de calorias e IMC para o visitante testar na hora",
+            "Comparador de antes e depois com slider interativo (arrastar foto pro lado)",
+            "Formulário completo de anamnese direto no site para o novo aluno preencher após pagar",
+            "Área exclusiva de membros/alunos com vídeos de execução e receitas"
+          ],
+          "required": false
+        },
+        {
+          "title": "25. Tem alguma outra ideia ou funcionalidade livre que você sonha em ter no site?",
+          "type": "paragraph",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

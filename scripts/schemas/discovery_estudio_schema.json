@@ -1,0 +1,161 @@
+{
+  "title": "Tríade Soluções — Diagnóstico & Descoberta Operacional de Estúdio",
+  "description": "Olá! Este questionário tem como objetivo mapear a rotina, os gargalos e as prioridades do seu estúdio.\n\nCom base nas suas respostas, a equipe da Tríade Soluções estruturará um plano personalizado e uma proposta de implantação modular em duas fases (MVP de entrada rápida + expansão contínua).\n\n⏱️ Tempo estimado: 5 a 7 minutos.\n🔒 Confidencialidade: Todas as informações são de uso estritamente estratégico.",
+  "sections": [
+    {
+      "title": "🏢 Bloco 0: Identificação do Estúdio & Contato",
+      "description": "Informações cadastrais básicas para contato e formalização da proposta.",
+      "questions": [
+        {
+          "title": "Nome do Estúdio / Razão Social",
+          "helpText": "Ex: Valkyrie Tattoo Studio",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "Nome do Responsável / Decisor Principal",
+          "helpText": "Ex: Carlos Silva (Sócio-proprietário)",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "WhatsApp Comercial de Contato",
+          "helpText": "Ex: +55 (11) 99999-8888",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "Perfil do Instagram do Estúdio",
+          "helpText": "Ex: @estudio_tattoo",
+          "type": "text",
+          "required": false
+        },
+        {
+          "title": "Cidade e Estado (UF)",
+          "helpText": "Ex: São Paulo / SP",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "📊 Bloco 1: Linha de Base & Gargalos Operacionais",
+      "description": "Mapeamento do volume atual, conversão e tempo gasto em tarefas manuais.",
+      "questions": [
+        {
+          "title": "1. Quantos clientes o estúdio atende por mês e qual é o ticket médio aproximado por sessão?",
+          "helpText": "Ex: 40 clientes/mês, com ticket médio de R$ 450 por sessão.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "2. Quantas pessoas entram em contato no WhatsApp por semana e quantas dessas conversas de fato viram agendamentos pagos?",
+          "helpText": "Ex: Recebemos cerca de 35 mensagens por semana, mas apenas 6 ou 7 fecham e pagam.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "3. Qual é a taxa estimada de clientes que marcam horário e não comparecem (no-show) ou desmarcam em cima da hora? Vocês já cobram sinal financeiro antecipado?",
+          "helpText": "Ex: Cerca de 20% a 25% desmarcam em cima da hora. Cobramos sinal de R$ 50 apenas de alguns clientes.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "4. Quanto tempo você ou sua equipe gastam por dia respondendo mensagens no WhatsApp, tirando dúvidas repetitivas, enviando dados de PIX e lembrando horários?",
+          "helpText": "Ex: Pelo menos 2 a 3 horas por dia entre conversas, confirmações e cobrança de comprovantes.",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "⚙️ Bloco 2: Adoção Operacional, Rotina & Equipe",
+      "description": "Entendimento de quem vai operar a solução e como é estruturada a gestão dos artistas.",
+      "questions": [
+        {
+          "title": "5. Quem será a pessoa responsável por operar o sistema no dia a dia e por qual dispositivo?",
+          "type": "choice",
+          "options": [
+            "Eu mesmo (Dono/Tatuador) — Principalmente pelo celular na bancada",
+            "Eu mesmo (Dono/Tatuador) — Pelo computador / notebook",
+            "Recepcionista / Atendente dedicada — Pelo computador e celular",
+            "Cada tatuador cuidará da sua própria agenda individualmente pelo celular"
+          ],
+          "required": true
+        },
+        {
+          "title": "6. Como funciona a relação com os tatuadores do estúdio hoje (comissão percentual, aluguel de maca ou funcionários) e como é feito o repasse financeiro?",
+          "helpText": "Ex: Temos 3 tatuadores parceiros com repasse de 60/40. O cálculo é feito manualmente no fim do mês via planilha.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "7. Vocês possuem algum histórico ou cadastro organizado dos clientes que já tatuaram no estúdio?",
+          "type": "choice",
+          "options": [
+            "Sim, temos planilha (Excel/Google Sheets) organizada com nomes e telefones",
+            "Sim, temos cadastro em cadernos ou fichas físicas de papel",
+            "Sim, temos contatos salvos no WhatsApp do estúdio sem planilha centralizada",
+            "Não temos histórico organizado, os contatos ficam espalhados"
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "🎯 Bloco 3: Priorização Rígida de Funcionalidades",
+      "description": "Definição do núcleo inegociável da primeira entrega para retorno imediato.",
+      "questions": [
+        {
+          "title": "8. Se você pudesse resolver apenas UM único problema nos próximos 30 dias para aliviar sua rotina e melhorar o caixa, qual escolheria?",
+          "type": "choice",
+          "options": [
+            "Opção A: Parar de perder tempo agendando e automatizar cobrança de sinal PIX + lembretes WhatsApp (Fim do No-Show)",
+            "Opção B: Fazer clientes antigos voltarem a tatuar e indicarem amigos (Clube VIP de Fidelidade & Cashback)",
+            "Opção C: Organizar a gestão financeira do estúdio e divisão automática de repasses dos tatuadores"
+          ],
+          "required": true
+        },
+        {
+          "title": "9. Qual resultado prático e mensurável fará você considerar este projeto um sucesso absoluto nos primeiros 60 dias de uso?",
+          "helpText": "Ex: Reduzir as faltas para zero, garantir R$ 2.000 em sinais antecipados e economizar 10 horas semanais de atendimento.",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "💰 Bloco 4: Orçamento, Custos Recorrentes & Prazos",
+      "description": "Alinhamento transparente de investimento e cronograma para estruturação da proposta.",
+      "questions": [
+        {
+          "title": "10. Para esta primeira fase (focada em resolver a dor prioritária), em qual faixa de investimento inicial o estúdio se sente confortável?",
+          "type": "choice",
+          "options": [
+            "R$ 3.000 a R$ 6.000 (Foco em MVP ágil e essencial)",
+            "R$ 6.000 a R$ 12.000 (MVP completo com automações avançadas)",
+            "Acima de R$ 12.000 (Plataforma robusta e personalizada)",
+            "Gostaria de avaliar a proposta técnica antes de definir"
+          ],
+          "required": true
+        },
+        {
+          "title": "11. O estúdio já possui orçamento reservado para as ferramentas de sustentação da plataforma (ex: R$ 80 a R$ 150/mês para API de WhatsApp e taxas de PIX)?",
+          "type": "choice",
+          "options": [
+            "Sim, temos provisionamento e compreendemos que os custos de APIs/gateways são do estúdio",
+            "Sim, mas gostaríamos de escolher as opções de menor custo de manutenção",
+            "Não tínhamos considerado, precisamos entender os valores detalhados na proposta"
+          ],
+          "required": true
+        },
+        {
+          "title": "12. Existe alguma data-limite ou evento importante no negócio (inauguração de espaço, convenção, campanha de fim de ano) que defina o prazo ideal de entrega?",
+          "helpText": "Ex: Gostaríamos de colocar no ar até o dia 20 do próximo mês.",
+          "type": "text",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

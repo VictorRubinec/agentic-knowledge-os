@@ -1,0 +1,162 @@
+{
+  "title": "Tríade Soluções — Formulário de Discovery e Diagnóstico (Studio de Tatuagem)",
+  "description": "Este formulário tem como objetivo mapear a operação, os gargalos e as prioridades do seu studio.\n\nCom base nas respostas, a equipe da Tríade Soluções estruturará um plano personalizado e uma proposta de implantação modular em duas fases (MVP de entrada rápida + expansão contínua).\n\nTempo estimado: 5 a 7 minutos.\nConfidencialidade: Todas as informações são de uso estritamente estratégico entre o studio e a Tríade.",
+  "sections": [
+    {
+      "title": "Identificação do Studio e Contato",
+      "description": "Informações cadastrais para formalização da proposta e contato direto.",
+      "questions": [
+        {
+          "title": "Nome do Studio de Tatuagem / Razão Social",
+          "helpText": "Ex: Valkyrie Tattoo Studio",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "Nome do Responsável / Decisor Principal",
+          "helpText": "Ex: Carlos Silva (Sócio-proprietário)",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "WhatsApp Comercial de Contato",
+          "helpText": "Ex: +55 (11) 99999-8888",
+          "type": "text",
+          "required": true
+        },
+        {
+          "title": "Perfil do Instagram do Studio",
+          "helpText": "Ex: @estudio_tattoo",
+          "type": "text",
+          "required": false
+        },
+        {
+          "title": "Cidade e Estado (UF)",
+          "helpText": "Ex: São Paulo / SP",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "1. Operação e Volume",
+      "description": "Mapeamento do volume de clientes, fluxo de atendimento e tempo operacional.",
+      "questions": [
+        {
+          "title": "1. Quantos clientes o studio atende atualmente por mês e qual é, aproximadamente, o valor médio de cada tatuagem ou sessão?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "2. Como funciona hoje o processo desde o primeiro contato de um cliente até o agendamento da tatuagem? Explique todas as etapas.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "3. Quantas pessoas normalmente entram em contato com o studio interessadas em tatuar e como vocês acompanham essas conversas até saber quais realmente se tornaram clientes?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "4. Quanto tempo você e sua equipe gastam diariamente respondendo mensagens, tirando dúvidas, passando valores, enviando informações de pagamento e organizando agendamentos?",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "2. Agendamento e Clientes",
+      "description": "Organização de agenda, cobrança de sinal, controle de faltas e histórico de clientes.",
+      "questions": [
+        {
+          "title": "5. Como os agendamentos são organizados atualmente e quais são as principais dificuldades que vocês enfrentam nesse processo?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "6. Com que frequência um cliente agenda um horário e acaba não comparecendo ou cancela próximo do horário marcado? Como vocês lidam atualmente com essas situações?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "7. Como funciona hoje a cobrança de sinal para reservar uma tatuagem? Explique como o pagamento é solicitado, confirmado e registrado.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "8. Como vocês registram atualmente as informações dos clientes, como dados pessoais, tatuagem realizada, tatuador responsável, histórico de atendimento e futuros agendamentos?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "9. Depois que uma tatuagem é realizada, como o studio mantém contato com esse cliente e trabalha para que ele volte, indique outras pessoas ou continue acompanhando o studio?",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "3. Gestão do Studio e Tatuadores",
+      "description": "Estrutura financeira, modelo de repasses aos artistas e gargalos de crescimento.",
+      "questions": [
+        {
+          "title": "10. Como está organizada atualmente a gestão empresarial e financeira do studio? Explique como vocês acompanham faturamento, custos, despesas, fluxo de caixa e resultados.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "11. Como funciona atualmente a relação entre o studio e os tatuadores? Explique como são organizados os horários, serviços realizados, valores e eventuais repasses ou comissões.",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "12. Quais são hoje os principais problemas de gestão que você acredita que atrapalham o crescimento do studio?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "13. Se o número de clientes aumentar consideravelmente nos próximos meses, quais partes da operação você acredita que teriam mais dificuldade para acompanhar esse crescimento?",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "4. Prioridade e Projeto",
+      "description": "Definição do foco de entrega imediata e critérios de sucesso da solução.",
+      "questions": [
+        {
+          "title": "14. Se a Tríade pudesse resolver apenas um problema do studio nos próximos 30 dias, qual problema você gostaria que fosse resolvido primeiro e por quê?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "15. Ao final dos primeiros 60 dias utilizando a solução, quais resultados concretos fariam você dizer que o projeto realmente valeu a pena para o studio?",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    },
+    {
+      "title": "5. Investimento e Planejamento",
+      "description": "Alinhamento de orçamento, sustentação mensal e cronograma de lançamento.",
+      "questions": [
+        {
+          "title": "16. Qual valor você considera adequado para investir inicialmente na solução, levando em consideração a realidade atual do studio?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "17. Além do desenvolvimento inicial, quais valores mensais você estaria disposto a destinar para manter, divulgar e fazer o projeto crescer?",
+          "type": "paragraph",
+          "required": true
+        },
+        {
+          "title": "18. Existe alguma data, evento, campanha ou objetivo específico que faça você precisar que a primeira versão do projeto esteja funcionando até determinado período?",
+          "type": "paragraph",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

@@ -30,7 +30,9 @@ export function ClickUpActivityFeed({ activities = [] }) {
           const isBot = act.type === "bot";
           const avatarBg = isBot ? "#7b68ee" : "#795548";
           const avatarIcon = isBot ? "🤖" : "VR";
-          const authorName = act.author || (isBot ? "Agente de Engenharia Join4" : "Victor Rubinec");
+          const authorName =
+            act.author ||
+            (isBot ? "Agente de Engenharia Join4" : "Victor Rubinec");
 
           return (
             <div key={idx} style={{ position: "relative" }}>
@@ -79,7 +81,13 @@ export function ClickUpActivityFeed({ activities = [] }) {
                     fontSize: "0.78rem",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                    }}
+                  >
                     <span style={{ fontWeight: "700", color: "#0f172a" }}>
                       {authorName}
                     </span>

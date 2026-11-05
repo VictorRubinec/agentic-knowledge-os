@@ -1879,6 +1879,15 @@ class HTMLDocumentPDFGenerator:
         if "grid-cols-4" not in html_content and "grid-cols-2" not in html_content:
             warnings.append("Grade de metadados em 4 colunas (Data, Autor, Contexto, Versão) não identificada no cabeçalho.")
 
+        # 6. Checagem de Definição CSS do Componente .card quando utilizado no DOM
+        has_card_usage = bool(re.search(r'class=["\'][^"\']*\bcard\b', html_content))
+        has_inline_card_css = bool(re.search(r'\.card\s*\{', html_content))
+        has_ds_link = bool(re.search(r'design-system\.css', html_content))
+        ds_file_exists = (WORKSPACE_DIR / "templates" / "assets" / "design-system.css").exists()
+
+        if has_card_usage and not has_inline_card_css and not has_ds_link and not ds_file_exists:
+            errors.append("O documento utiliza o componente 'class=\"card\"', mas a regra CSS '.card { ... }' está ausente na tag <style> ou via design-system.css.")
+
         if warnings and self.verbose:
             for w in warnings:
                 log_warn(f"[DESIGN SYSTEM] {w}")
@@ -1921,7 +1930,16 @@ class HTMLDocumentPDFGenerator:
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
                 page = browser.new_page(viewport={"width": 1280, "height": 1800})
-                page.goto(self.html_file.resolve().as_uri(), wait_until="networkidle")
+                try:
+                    page.goto(self.html_file.resolve().as_uri(), wait_until="networkidle", timeout=12000)
+                except Exception:
+                    # Fallback resiliente caso conexões externas de CDNs (Tailwind, Google Fonts) permaneçam abertas
+                    page.goto(self.html_file.resolve().as_uri(), wait_until="load", timeout=15000)
+
+                # Injetar Single Source of Truth (SSOT) do Design System se presente
+                ds_css_path = WORKSPACE_DIR / "templates" / "assets" / "design-system.css"
+                if ds_css_path.exists():
+                    page.add_style_tag(path=str(ds_css_path))
 
                 # Aguardar renderização de diagramas Mermaid se presentes
                 try:
@@ -1931,6 +1949,13 @@ class HTMLDocumentPDFGenerator:
                         page.wait_for_selector(".mermaid svg, pre.mermaid svg", timeout=4000)
                 except Exception:
                     pass
+
+                # Auditoria de Erros nos diagramas Mermaid pelo DOM
+                body_text = page.inner_text("body")
+                if "Syntax error in text" in body_text:
+                    log_error("Erro de sintaxe detectado dentro do diagrama Mermaid pelo Chromium.")
+                    browser.close()
+                    return False
 
                 # Aguardar carregamento de fontes
                 try:
@@ -2021,7 +2046,10 @@ class SlideDeckPDFGenerator:
                 with sync_playwright() as p:
                     browser = p.chromium.launch(headless=True)
                     page = browser.new_page(viewport={"width": 1920, "height": 1080})
-                    page.goto(self.html_file.resolve().as_uri(), wait_until="networkidle")
+                    try:
+                        page.goto(self.html_file.resolve().as_uri(), wait_until="networkidle", timeout=12000)
+                    except Exception:
+                        page.goto(self.html_file.resolve().as_uri(), wait_until="load", timeout=15000)
                     page.wait_for_timeout(500)
 
                     total_slides = page.evaluate("document.querySelectorAll('.slide').length")

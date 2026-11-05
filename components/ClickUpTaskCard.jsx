@@ -1,16 +1,66 @@
 import React from "react";
 
 const statusColors = {
-  "em teste": { bg: "#fff7ed", border: "#f97316", text: "#c2410c", bar: "#ea580c" },
-  "em review": { bg: "#fff7ed", border: "#f97316", text: "#c2410c", bar: "#ea580c" },
-  "em desenvolvimento": { bg: "#ede9fe", border: "#8b5cf6", text: "#5b21b6", bar: "#7c3aed" },
-  "em progresso": { bg: "#eff6ff", border: "#3b82f6", text: "#1e40af", bar: "#2563eb" },
-  "aguardando aprovação": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", bar: "#d97706" },
-  "aguardando gestor": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", bar: "#d97706" },
-  "concluído": { bg: "#ecfdf5", border: "#10b981", text: "#065f46", bar: "#059669" },
-  "homologação": { bg: "#f5f3ff", border: "#a855f7", text: "#6b21a8", bar: "#9333ea" },
-  "backlog": { bg: "#f1f5f9", border: "#94a3b8", text: "#334155", bar: "#64748b" },
-  default: { bg: "#f1f5f9", border: "#94a3b8", text: "#334155", bar: "#64748b" },
+  "em teste": {
+    bg: "#fff7ed",
+    border: "#f97316",
+    text: "#c2410c",
+    bar: "#ea580c",
+  },
+  "em review": {
+    bg: "#fff7ed",
+    border: "#f97316",
+    text: "#c2410c",
+    bar: "#ea580c",
+  },
+  "em desenvolvimento": {
+    bg: "#ede9fe",
+    border: "#8b5cf6",
+    text: "#5b21b6",
+    bar: "#7c3aed",
+  },
+  "em progresso": {
+    bg: "#eff6ff",
+    border: "#3b82f6",
+    text: "#1e40af",
+    bar: "#2563eb",
+  },
+  "aguardando aprovação": {
+    bg: "#fef3c7",
+    border: "#f59e0b",
+    text: "#92400e",
+    bar: "#d97706",
+  },
+  "aguardando gestor": {
+    bg: "#fef3c7",
+    border: "#f59e0b",
+    text: "#92400e",
+    bar: "#d97706",
+  },
+  concluído: {
+    bg: "#ecfdf5",
+    border: "#10b981",
+    text: "#065f46",
+    bar: "#059669",
+  },
+  homologação: {
+    bg: "#f5f3ff",
+    border: "#a855f7",
+    text: "#6b21a8",
+    bar: "#9333ea",
+  },
+  backlog: {
+    bg: "#f1f5f9",
+    border: "#94a3b8",
+    text: "#334155",
+    bar: "#64748b",
+  },
+  default: {
+    bg: "#f1f5f9",
+    border: "#94a3b8",
+    text: "#334155",
+    bar: "#64748b",
+  },
 };
 
 const priorityStyles = {
@@ -186,17 +236,15 @@ export function ClickUpTaskCard({
           </span>
 
           {/* Due date */}
-          {dueDate && (
-            <span style={{ color: "#64748b" }}>
-              📅 {dueDate}
-            </span>
-          )}
+          {dueDate && <span style={{ color: "#64748b" }}>📅 {dueDate}</span>}
         </div>
 
         {/* Right side: Assignee & Optional Progress */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {pct !== null && (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}
+            >
               <div
                 style={{
                   width: "50px",
@@ -214,7 +262,13 @@ export function ClickUpTaskCard({
                   }}
                 />
               </div>
-              <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: "600" }}>
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  color: "#64748b",
+                  fontWeight: "600",
+                }}
+              >
                 {progress.completed}/{progress.total}
               </span>
             </div>

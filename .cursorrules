@@ -2,7 +2,9 @@
 
 - Leia atentamente o arquivo AGENTS.md para todas as instruções operacionais.
 - Linha do Tempo Única: Nunca crie múltiplos arquivos sobre o mesmo tema. Atualize o arquivo existente na seção '## Linha do Tempo'.
-- Formato MDX Visual: Utilize componentes visuais (<Timeline />, <Callout />, <Badge />) para organizar informações.
-- Diagramas Mermaid: Sempre coloque rótulos entre aspas duplas, evite tags HTML <b> e nunca gere árvores horizontais muito largas.
-- Motor de PDF: Use estritamente 'python scripts/gerar_pdf.py <arquivo.mdx>' para compilar relatórios.
+- Formato Dual: Use HTML5 Standalone (.html) para artefatos consolidados e Markdown (.md) para rascunhos.
+- Inicialização de Documentos: Crie novos documentos HTML obrigatoriamente via CLI 'python scripts/novo_documento.py'.
+- Diagramas Mermaid: Sempre coloque rótulos entre aspas duplas, evite tags HTML e nunca gere árvores horizontais muito largas.
+- Motor de PDF: Use estritamente 'python scripts/gerar_pdf.py <arquivo.html>' para compilar relatórios.
+- Economia de Contexto: Priorize modelos leves (Flash/Flash-Lite) para subagentes e varreduras de arquivos.
 - Mantenha MEMORY.md e ORGANIZATION.md atualizados a cada nova entrega.

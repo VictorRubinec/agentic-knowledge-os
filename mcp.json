@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "knowledge-os": {
+      "command": "python",
+      "args": ["scripts/knowledge_os_mcp.py"],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}

@@ -1,16 +1,66 @@
 import React from "react";
 
 const statusColors = {
-  "em teste": { bg: "#fff7ed", border: "#f97316", text: "#c2410c", dot: "#ea580c" },
-  "em review": { bg: "#fff7ed", border: "#f97316", text: "#c2410c", dot: "#ea580c" },
-  "em desenvolvimento": { bg: "#ede9fe", border: "#8b5cf6", text: "#5b21b6", dot: "#7c3aed" },
-  "em progresso": { bg: "#eff6ff", border: "#3b82f6", text: "#1e40af", dot: "#2563eb" },
-  "aguardando aprovação": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", dot: "#d97706" },
-  "aguardando gestor": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", dot: "#d97706" },
-  "concluído": { bg: "#ecfdf5", border: "#10b981", text: "#065f46", dot: "#059669" },
-  "homologação": { bg: "#f5f3ff", border: "#a855f7", text: "#6b21a8", dot: "#9333ea" },
-  "backlog": { bg: "#f1f5f9", border: "#94a3b8", text: "#334155", dot: "#64748b" },
-  default: { bg: "#f1f5f9", border: "#94a3b8", text: "#334155", dot: "#64748b" },
+  "em teste": {
+    bg: "#fff7ed",
+    border: "#f97316",
+    text: "#c2410c",
+    dot: "#ea580c",
+  },
+  "em review": {
+    bg: "#fff7ed",
+    border: "#f97316",
+    text: "#c2410c",
+    dot: "#ea580c",
+  },
+  "em desenvolvimento": {
+    bg: "#ede9fe",
+    border: "#8b5cf6",
+    text: "#5b21b6",
+    dot: "#7c3aed",
+  },
+  "em progresso": {
+    bg: "#eff6ff",
+    border: "#3b82f6",
+    text: "#1e40af",
+    dot: "#2563eb",
+  },
+  "aguardando aprovação": {
+    bg: "#fef3c7",
+    border: "#f59e0b",
+    text: "#92400e",
+    dot: "#d97706",
+  },
+  "aguardando gestor": {
+    bg: "#fef3c7",
+    border: "#f59e0b",
+    text: "#92400e",
+    dot: "#d97706",
+  },
+  concluído: {
+    bg: "#ecfdf5",
+    border: "#10b981",
+    text: "#065f46",
+    dot: "#059669",
+  },
+  homologação: {
+    bg: "#f5f3ff",
+    border: "#a855f7",
+    text: "#6b21a8",
+    dot: "#9333ea",
+  },
+  backlog: {
+    bg: "#f1f5f9",
+    border: "#94a3b8",
+    text: "#334155",
+    dot: "#64748b",
+  },
+  default: {
+    bg: "#f1f5f9",
+    border: "#94a3b8",
+    text: "#334155",
+    dot: "#64748b",
+  },
 };
 
 const priorityStyles = {
@@ -52,7 +102,8 @@ export function ClickUpTaskHeader({
         borderRadius: "0.625rem",
         padding: "1rem 1.25rem",
         margin: "1.25rem 0",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)",
+        boxShadow:
+          "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)",
       }}
     >
       {/* Top Bar: Breadcrumb + ClickUp Action Link */}
@@ -71,7 +122,9 @@ export function ClickUpTaskHeader({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-          <span style={{ fontWeight: "600", color: "#475569" }}>Join4 Produtos</span>
+          <span style={{ fontWeight: "600", color: "#475569" }}>
+            Join4 Produtos
+          </span>
           <span>/</span>
           {folder && <span>{folder}</span>}
           {folder && <span>/</span>}
@@ -130,7 +183,11 @@ export function ClickUpTaskHeader({
       >
         {/* Status Pill */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-          <span style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "500" }}>Status:</span>
+          <span
+            style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "500" }}
+          >
+            Status:
+          </span>
           <span
             style={{
               display: "inline-flex",
@@ -162,7 +219,11 @@ export function ClickUpTaskHeader({
 
         {/* Priority Badge */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-          <span style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "500" }}>Prioridade:</span>
+          <span
+            style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "500" }}
+          >
+            Prioridade:
+          </span>
           <span
             style={{
               display: "inline-flex",
@@ -183,8 +244,18 @@ export function ClickUpTaskHeader({
 
         {/* Assignee */}
         {assignee && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-            <span style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "500" }}>Responsável:</span>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}
+          >
+            <span
+              style={{
+                color: "#64748b",
+                fontSize: "0.75rem",
+                fontWeight: "500",
+              }}
+            >
+              Responsável:
+            </span>
             <span
               style={{
                 display: "inline-flex",
@@ -222,8 +293,18 @@ export function ClickUpTaskHeader({
 
         {/* Due Date */}
         {dueDate && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-            <span style={{ color: "#64748b", fontSize: "0.75rem", fontWeight: "500" }}>Prazo:</span>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}
+          >
+            <span
+              style={{
+                color: "#64748b",
+                fontSize: "0.75rem",
+                fontWeight: "500",
+              }}
+            >
+              Prazo:
+            </span>
             <span
               style={{
                 display: "inline-flex",
@@ -246,7 +327,14 @@ export function ClickUpTaskHeader({
 
         {/* Tags */}
         {tags && tags.length > 0 && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.3rem",
+              flexWrap: "wrap",
+            }}
+          >
             {tags.map((tag, idx) => (
               <span
                 key={idx}
