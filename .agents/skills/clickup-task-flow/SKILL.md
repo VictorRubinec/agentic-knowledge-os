@@ -11,7 +11,7 @@ Esta skill guia o agente no cumprimento estrito das **Diretrizes 16 e 17 do AGEN
 
 ## 1. Princípios Inegociáveis
 
-1. **Rastreabilidade de Ponta a Ponta**: Toda tarefa deve ser registrada em `trabalho/join4/produto/tarefas/task-XXX-slug.mdx` utilizando o template mestre [`00-meta/TEMPLATE_TAREFA.mdx`](file:///./00-meta/TEMPLATE_TAREFA.mdx).
+1. **Rastreabilidade de Ponta a Ponta**: Toda tarefa deve ser registrada em `trabalho/join4/produto/tarefas/task-XXX-slug.mdx` utilizando o template mestre [`00-meta/TEMPLATE_TAREFA.mdx`](file:///d:/Desktop/Anotações/00-meta/TEMPLATE_TAREFA.mdx).
 2. **Escopo Imutável & Aditivos**: O escopo original extraído do ClickUp **nunca deve ser deletado ou alterado**. Novos requisitos surgidos no decorrer da execução devem ser adicionados na seção `### Aditivos de Escopo`.
 3. **Gate Mandatório de Aprovação Humana**: **NUNCA** anexe arquivos ou poste relatórios finais no ClickUp sem exibir o link do PDF compilado ao usuário e aguardar seu "de acordo" explícito.
 4. **Motor Central Unificado de PDF**: Sempre utilize `python scripts/gerar_pdf.py` para gerar e auditar o layout do PDF.
@@ -29,7 +29,7 @@ python scripts/analisador_clickup.py --task <TASK_ID>
 - Consulta a API do ClickUp.
 - Gera a análise de módulo, impacto arquitetural e checkpoints.
 - Cria ou localiza o arquivo `trabalho/join4/produto/tarefas/task-XXX-<slug>.mdx`.
-- Atualiza o painel central [`trabalho/join4/produto/tarefas/README.mdx`](file:///./trabalho/join4/produto/tarefas/README.mdx).
+- Atualiza o painel central [`trabalho/join4/produto/tarefas/README.mdx`](file:///d:/Desktop/Anotações/trabalho/join4/produto/tarefas/README.mdx).
 
 ### Passo 2: Execução Técnica e Registro Contínuo
 Conforme a demanda técnica avança:
@@ -53,7 +53,7 @@ O PDF será compilado na pasta `pdf/` do respectivo módulo ou diretório.
 ### Passo 5: Gate de Aprovação Humana (PAUSA OBRIGATÓRIA)
 Apresente o link do PDF gerado no chat com uma mensagem formal:
 > "O dossiê da tarefa **[Nome da Tarefa]** foi compilado com sucesso:
-> 📄 [task-XXX-slug.pdf](file:///./trabalho/join4/produto/tarefas/pdf/task-XXX-slug.pdf)
+> 📄 [task-XXX-slug.pdf](file:///d:/Desktop/Anotações/trabalho/join4/produto/tarefas/pdf/task-XXX-slug.pdf)
 > 
 > Você aprova o anexo deste PDF e a atualização do status na tarefa `<TASK_ID>` do ClickUp?"
 

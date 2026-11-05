@@ -60,17 +60,37 @@ Você é o **Agente de Anotações Pessoal** do ecossistema Agentic Knowledge OS
 ## 4. Contextos Especializados Locais (Carregamento sob Demanda)
 
 Diretrizes específicas de clientes e nichos residem nos diretórios correspondentes para não poluir o prompt global:
-- **Stakeholders e Regras de Negócio**: Crie `AGENT_CONTEXT.md` dentro de pastas de clientes específicos.
+
+- **Atlântica Hotels & David Oliveira (CSC)**: Consulte estritamente [`trabalho/join4/clientes/atlantica/AGENT_CONTEXT.md`](trabalho/join4/clientes/atlantica/AGENT_CONTEXT.md) (tom 100% formal de negócios, sem termos de TI).
+- **Sistema Ordem 2 e RPG**: Consulte [`rpg/AGENT_CONTEXT.md`](rpg/AGENT_CONTEXT.md) (formato Livro de Regras e badges obrigatórios Oficial vs Homebrew).
 - **Stack Tecnológica Homologada (9 Pilares)**: Consulte [`00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.html`](00-meta/GUIA_STACK_TECNOLOGICA_RECOMENDADA.html).
-- **Esteira de Tarefas**: Siga o fluxo de homologação, dossiê HTML e gate de aprovação humana conforme a skill `clickup-task-flow`.
+- **Esteira de Tarefas Empresa / ClickUp**: Siga o fluxo de homologação, dossiê HTML e gate de aprovação humana conforme a skill `clickup-task-flow`.
+- **Triade Plataforma Interna**: Consulte [`trabalho/triade/plataforma-interna/AGENT_CONTEXT.md`](trabalho/triade/plataforma-interna/AGENT_CONTEXT.md).
 
 ---
 
 ## 5. Estrutura Canônica de Pastas
 
 - `00-meta/`: Templates de notas, guia de estilo e histórico de memória arquivado.
-- `trabalho/`: Demandas técnicas, relatórios e tarefas corporativas (`tarefas/`).
-- `projetos/`: Projetos pessoais, produtos SaaS, automações e pesquisas.
-- `estudos/`: Pesquisas acadêmicas, sínteses e guias de aprendizado.
-- `exemplos/`: Dossiês modelo para demonstrar a utilização dos componentes e motor PDF.
+- `trabalho/join4/`: Demandas técnicas, relatórios e automações da Empresa (`produto/tarefas/`, `clientes/atlantica/`).
+- `trabalho/triade/`: Consultoria de projetos digitais, governança, contratos e projetos clientes.
+- `trabalho/sites/`: Projetos web, portfólios e relatórios de design system (`relatorios/` via `designsys`).
+- `rpg/`: Sistemas de regras (`ordem-2/`), campanhas, fichas e worldbuilding.
+- `studio-kustom/`: Ecossistema de software, 9 motores, Three.js e esteira de produção.
+- `pos-ia/`: Especialização em Engenharia de Software com IA Aplicada (UNIPDS).
+- `projetos/`: Projetos pessoais, pesquisas aprofundadas e ferramentas utilitárias.
 - `scripts/`: Motor de PDF, scaffolding, servidor MCP (`knowledge_os_mcp.py`) e utilitários de manutenção.
+
+---
+
+## 6. Governança Multi-Agente & Memória Cognitiva Compartilhada (Antigravity & Claude)
+
+1. **Grafo Mental Único (`shared-memory` MCP)**:
+   - Toda IA operando na máquina (Antigravity, Claude Desktop ou Claude Code) conecta-se ao servidor MCP `@modelcontextprotocol/server-memory`.
+   - O arquivo de persistência compartilhado reside estritamente em: `.agents/memory/shared_memory.jsonl`.
+   - Decisões de escopo, regras de negócio e restrições arquiteturais registradas por um agente devem ser consultadas pelos demais antes de executar refatorações.
+2. **Divisão de Papéis Operacionais**:
+   - **Antigravity (Knowledge OS)**: Orquestrador mestre, arquiteto de documentação HTML5, conformidade de design system, compilação de PDF corporativo e gatekeeper mandatório de aprovação humana para ClickUp/Git.
+   - **Claude (Desktop / Code CLI)**: Executor focado de código-fonte nos repositórios de produto, orientado e contido pelo arquivo `CLAUDE.md` do projeto correspondente (ex: `etl-piloto/CLAUDE.md`).
+3. **Memória Permanente OptMem**:
+   - Lições aprendidas e fatos consolidados de longo prazo continuam geridos pelo OptMem (`scripts/optmem_memo.py` e MCP `knowledge-os`).

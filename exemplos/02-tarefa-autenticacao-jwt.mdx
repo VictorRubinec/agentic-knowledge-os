@@ -1,7 +1,7 @@
 ---
-title: "TASK-001: Implementação de Autenticação Segura JWT com Refresh Token e Rotação"
+title: "TASK-001: ImplementaÃ§Ã£o de AutenticaÃ§Ã£o Segura JWT com Refresh Token e RotaÃ§Ã£o"
 category: "exemplos"
-tags: ["segurança", "autenticacao", "jwt", "tarefas", "backend"]
+tags: ["seguranÃ§a", "autenticacao", "jwt", "tarefas", "backend"]
 createdAt: "2026-10-14"
 updatedAt: "2026-10-14"
 status: "concluido"
@@ -13,34 +13,34 @@ import { Badge } from "../components/Badge.jsx";
 import { Callout } from "../components/Callout.jsx";
 import { LinkCard } from "../components/LinkCard.jsx";
 
-# [TASK-001] Implementação de Autenticação Segura JWT com Refresh Token e Rotação
+# [TASK-001] ImplementaÃ§Ã£o de AutenticaÃ§Ã£o Segura JWT com Refresh Token e RotaÃ§Ã£o
 
-<Badge label="Módulo Segurança" type="trabalho" />
-<Badge label="Status: Concluído" type="projeto" />
+<Badge label="MÃ³dulo SeguranÃ§a" type="trabalho" />
+<Badge label="Status: ConcluÃ­do" type="projeto" />
 <Badge label="Prioridade: Alta" type="ideia" />
 
-## Visão Geral & Contexto
+## VisÃ£o Geral & Contexto
 
-Esta tarefa visa substituir o modelo anterior de autenticação baseada em sessão por um mecanismo robusto e escalável de **Access Tokens JWT (vida curta de 15 min)** e **Refresh Tokens opacos rotativos (vida de 7 dias)**, armazenados em cookies HTTP-Only com proteção contra CSRF e XSS.
+Esta tarefa visa substituir o modelo anterior de autenticaÃ§Ã£o baseada em sessÃ£o por um mecanismo robusto e escalÃ¡vel de **Access Tokens JWT (vida curta de 15 min)** e **Refresh Tokens opacos rotativos (vida de 7 dias)**, armazenados em cookies HTTP-Only com proteÃ§Ã£o contra CSRF e XSS.
 
-- **Responsável**: Engenheiro de Software
-- **Complexidade**: Média (Segurança Crítica)
-- **Status de Homologação**: 100% dos testes unitários e de integração aprovados.
+- **ResponsÃ¡vel**: Engenheiro de Software
+- **Complexidade**: MÃ©dia (SeguranÃ§a CrÃ­tica)
+- **Status de HomologaÃ§Ã£o**: 100% dos testes unitÃ¡rios e de integraÃ§Ã£o aprovados.
 
 ---
 
-## 1. Parecer Técnico & Análise de Segurança
+## 1. Parecer TÃ©cnico & AnÃ¡lise de SeguranÃ§a
 
-<Callout title="Padrão OWASP Implementado" type="info">
-  Adotamos a rotação obrigatória de refresh token: cada requisição de renovação invalida o refresh token anterior. Caso um token revogado seja reutilizado, todas as sessões do usuário são imediatamente invalidadas por suspeita de comprometimento.
+<Callout title="PadrÃ£o OWASP Implementado" type="info">
+  Adotamos a rotaÃ§Ã£o obrigatÃ³ria de refresh token: cada requisiÃ§Ã£o de renovaÃ§Ã£o invalida o refresh token anterior. Caso um token revogado seja reutilizado, todas as sessÃµes do usuÃ¡rio sÃ£o imediatamente invalidadas por suspeita de comprometimento.
 </Callout>
 
-### 1.1 Diagrama de Sequência da Rotação
+### 1.1 Diagrama de SequÃªncia da RotaÃ§Ã£o
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor U as Usuário / SPA
+    actor U as UsuÃ¡rio / SPA
     participant G as API Gateway
     participant A as Auth Service
     participant R as Cache Redis
@@ -48,50 +48,50 @@ sequenceDiagram
     U->>G: POST /auth/refresh (Cookie HttpOnly)
     G->>A: Validar Refresh Token
     A->>R: Verificar se token foi revogado?
-    alt Token Válido
+    alt Token VÃ¡lido
         R-->>A: Token Ativo
         A->>R: Revogar Token Atual & Criar Novo Par
         A-->>G: Novo Access JWT + Novo Refresh Cookie
         G-->>U: 200 OK (Tokens Atualizados)
     else Token Revogado (Ataque Detectado)
-        R-->>A: Alerta de Reúso!
-        A->>R: Expirar todas as sessões do Usuário
+        R-->>A: Alerta de ReÃºso!
+        A->>R: Expirar todas as sessÃµes do UsuÃ¡rio
         A-->>G: 401 Unauthorized
-        G-->>U: Sessão Bloqueada
+        G-->>U: SessÃ£o Bloqueada
     end
 ```
 
 ---
 
-## 2. Escopo Inicial (Imutável)
+## 2. Escopo Inicial (ImutÃ¡vel)
 
-- [x] Criação de schema de dados para controle de tokens revogados.
-- [x] Middleware de extração e validação de claims JWT via chave pública assimétrica (RS256).
+- [x] CriaÃ§Ã£o de schema de dados para controle de tokens revogados.
+- [x] Middleware de extraÃ§Ã£o e validaÃ§Ã£o de claims JWT via chave pÃºblica assimÃ©trica (RS256).
 - [x] Endpoints `/auth/login`, `/auth/refresh` e `/auth/logout`.
-- [x] Testes automatizados cobrindo cenários de ataque de repetição (Replay Attack).
+- [x] Testes automatizados cobrindo cenÃ¡rios de ataque de repetiÃ§Ã£o (Replay Attack).
 
 ---
 
-## 3. Linha do Tempo de Execução
+## 3. Linha do Tempo de ExecuÃ§Ã£o
 
 <Timeline
   items={[
     {
       date: "2026-10-14",
-      title: "Deploy em Produção & Testes de Carga",
-      content: "Validação com 2.000 requisições concorrentes sem falhas de concorrência no Redis.",
-      status: "Produção",
+      title: "Deploy em ProduÃ§Ã£o & Testes de Carga",
+      content: "ValidaÃ§Ã£o com 2.000 requisiÃ§Ãµes concorrentes sem falhas de concorrÃªncia no Redis.",
+      status: "ProduÃ§Ã£o",
     },
     {
       date: "2026-10-12",
       title: "Auditoria DevSecOps",
-      content: "Varredura SAST/DAST concluída sem apontamento de vulnerabilidades críticas.",
+      content: "Varredura SAST/DAST concluÃ­da sem apontamento de vulnerabilidades crÃ­ticas.",
       status: "Homologado",
     },
     {
       date: "2026-10-10",
-      title: "Início do Desenvolvimento",
-      content: "Definição dos contratos de API e escrita da suíte de testes TDD.",
+      title: "InÃ­cio do Desenvolvimento",
+      content: "DefiniÃ§Ã£o dos contratos de API e escrita da suÃ­te de testes TDD.",
       status: "Iniciado",
     },
   ]}
@@ -101,4 +101,4 @@ sequenceDiagram
 
 ## Assuntos Relacionados
 
-- [`01-ata-reuniao-arquitetura.mdx`](01-ata-reuniao-arquitetura.mdx) — Ata de arquitetura que homologou a migração de autenticação.
+- [`01-ata-reuniao-arquitetura.mdx`](01-ata-reuniao-arquitetura.mdx) â€” Ata de arquitetura que homologou a migraÃ§Ã£o de autenticaÃ§Ã£o.

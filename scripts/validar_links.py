@@ -36,6 +36,7 @@ IGNORE_DIRS = {
     "templates",
     "starter-kit",
     "memoria",
+    "wa-akg-gateway",
 }
 
 # Regex para links markdown: [texto](url) e ![alt](url)

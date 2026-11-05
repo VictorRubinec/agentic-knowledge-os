@@ -1,10 +1,10 @@
 # Regras para Agentes de IA (Cursor / Antigravity / Claude Code)
 
-- Leia atentamente o arquivo AGENTS.md para todas as instruções operacionais.
-- Linha do Tempo Única: Nunca crie múltiplos arquivos sobre o mesmo tema. Atualize o arquivo existente na seção '## Linha do Tempo'.
+- Leia atentamente o arquivo AGENTS.md para todas as instruÃ§Ãµes operacionais.
+- Linha do Tempo Ãšnica: Nunca crie mÃºltiplos arquivos sobre o mesmo tema. Atualize o arquivo existente na seÃ§Ã£o '## Linha do Tempo'.
 - Formato Dual: Use HTML5 Standalone (.html) para artefatos consolidados e Markdown (.md) para rascunhos.
-- Inicialização de Documentos: Crie novos documentos HTML obrigatoriamente via CLI 'python scripts/novo_documento.py'.
-- Diagramas Mermaid: Sempre coloque rótulos entre aspas duplas, evite tags HTML e nunca gere árvores horizontais muito largas.
-- Motor de PDF: Use estritamente 'python scripts/gerar_pdf.py <arquivo.html>' para compilar relatórios.
+- InicializaÃ§Ã£o de Documentos: Crie novos documentos HTML obrigatoriamente via CLI 'python scripts/novo_documento.py'.
+- Diagramas Mermaid: Sempre coloque rÃ³tulos entre aspas duplas, evite tags HTML e nunca gere Ã¡rvores horizontais muito largas.
+- Motor de PDF: Use estritamente 'python scripts/gerar_pdf.py <arquivo.html>' para compilar relatÃ³rios.
 - Economia de Contexto: Priorize modelos leves (Flash/Flash-Lite) para subagentes e varreduras de arquivos.
 - Mantenha MEMORY.md e ORGANIZATION.md atualizados a cada nova entrega.

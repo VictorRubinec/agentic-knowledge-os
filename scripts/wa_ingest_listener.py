@@ -42,9 +42,10 @@ def garantir_diretorios():
             encoding="utf-8"
         )
 
-def processar_mensagem_whatsapp(payload: dict) -> dict:
+def processar_mensagem_whatsapp(payload: dict, target_file: Path = None) -> dict:
     """Classifica e persiste a mensagem recebida."""
     garantir_diretorios()
+    links_file = target_file or CAPTURED_LINKS_FILE
     
     event = payload.get("event")
     data = payload.get("data", {})
@@ -80,15 +81,14 @@ def processar_mensagem_whatsapp(payload: dict) -> dict:
     # Detecção de URLs
     urls = re.findall(r'https?://[^\s]+', conteudo)
     if urls:
-        with open(CAPTURED_LINKS_FILE, "r", encoding="utf-8") as f:
-            total_linhas = len(f.readlines())
+        total_linhas = len(links_file.read_text(encoding="utf-8").splitlines()) if links_file.exists() else 0
         
         novo_id = max(1, total_linhas - 3)
         tags = re.findall(r'#(\w+)', conteudo)
         tags_str = ", ".join(tags) if tags else "Sem tag"
         
         linha_tabela = f"| {novo_id} | {dt_str} | WhatsApp ({session_id[:8]}) | {push_name} | {conteudo} | {tags_str} |\n"
-        with open(CAPTURED_LINKS_FILE, "a", encoding="utf-8") as f:
+        with open(links_file, "a", encoding="utf-8") as f:
             f.write(linha_tabela)
             
         return {

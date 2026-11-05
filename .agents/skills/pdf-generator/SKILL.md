@@ -5,7 +5,7 @@ description: Motor central e linter para compilação de documentos MDX em PDFs 
 
 # Skill: Geração e Validação de PDFs (MDX -> PDF)
 
-Esta skill orienta os agentes de IA a utilizarem o motor central unificado [`scripts/gerar_pdf.py`](file:///./scripts/gerar_pdf.py) para compilar e validar arquivos `.mdx` em PDFs A4 de alta fidelidade visual.
+Esta skill orienta os agentes de IA a utilizarem o motor central unificado [`scripts/gerar_pdf.py`](file:///d:/Desktop/Anotações/scripts/gerar_pdf.py) para compilar e validar arquivos `.mdx` em PDFs A4 de alta fidelidade visual.
 
 ---
 
@@ -34,7 +34,7 @@ Esta skill orienta os agentes de IA a utilizarem o motor central unificado [`scr
 ## 3. Temas Visuais Suportados
 
 - **`corporate`** (Padrão): Identidade visual sóbria em tons azul/ardósia (`#0284c7` / `#0f172a`), ideal para propostas comerciais, relatórios e planejamentos.
-- **`join4`**: Identidade corporativa Empresa / Startup CSC / Cliente Corporativo em azul marinho profundo (`#0369a1` / `#1e293b`).
+- **`join4`**: Identidade corporativa Empresa / Startup CSC / Atlântica Hotels em azul marinho profundo (`#0369a1` / `#1e293b`).
 - **`somos1`**: Identidade Tríade / Somos 1 Tattoo Studio.
 - **`rpg`**: Identidade visual para o Sistema Ordem 2 e Livros de Regras com tons rubros/escuros (`#dc2626` / `#18181b`).
 - **`minimal`**: Layout limpo em escala de cinza para notas técnicas simplificadas.

@@ -25,7 +25,7 @@ Verifica se todos os arquivos `.mdx` contêm os campos obrigatórios (`title`, `
 ```bash
 python scripts/validar_frontmatter.py
 ```
-*Se houver falha:* Identifique o arquivo relatado e adicione os campos ou seções ausentes conforme o [`00-meta/TEMPLATE_NOTA.mdx`](file:///./00-meta/TEMPLATE_NOTA.mdx).
+*Se houver falha:* Identifique o arquivo relatado e adicione os campos ou seções ausentes conforme o [`00-meta/TEMPLATE_NOTA.mdx`](file:///d:/Desktop/Anotações/00-meta/TEMPLATE_NOTA.mdx).
 
 ### Passo 2: Auditoria de Links e Hiperlinks Cruzados
 Rastreia links quebrados, caminhos relativos inexistentes ou links absolutos locais proibidos:

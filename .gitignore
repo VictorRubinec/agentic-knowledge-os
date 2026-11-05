@@ -16,7 +16,7 @@ ms-playwright/
 .pytest_cache/
 test-results/
 
-# Segredos, Chaves e Credenciais (Blindagem de Segurança)
+# Segredos, Chaves e Credenciais (Blindagem de SeguranÃ§a)
 .env
 .env.*
 *.local
@@ -33,7 +33,7 @@ token*.json
 .gemini/
 scratch/
 
-# Build & PDFs Temporários
+# Build & PDFs TemporÃ¡rios
 dist/
 build/
 output_pdf/

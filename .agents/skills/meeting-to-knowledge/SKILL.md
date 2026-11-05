@@ -14,7 +14,7 @@ Esta skill transforma notas brutas, transcrições de áudio e discussões de al
 1. **Linha do Tempo Única (Sem Duplicação de Arquivos)**:
    - **NÃO crie um novo arquivo** se o assunto já possuir um `.mdx` no repositório.
    - Sempre busque o arquivo correspondente e adicione um novo registro na `<Timeline />`.
-   - Crie um novo `.mdx` apenas se o assunto for inédito, utilizando o [`00-meta/TEMPLATE_NOTA.mdx`](file:///./00-meta/TEMPLATE_NOTA.mdx).
+   - Crie um novo `.mdx` apenas se o assunto for inédito, utilizando o [`00-meta/TEMPLATE_NOTA.mdx`](file:///d:/Desktop/Anotações/00-meta/TEMPLATE_NOTA.mdx).
 2. **Preservação Histórica**:
    - Nunca apague diagnósticos, decisões ou versões anteriores de um relatório. Organize os novos fatos em seções cronológicas ou entradas na linha do tempo.
 
@@ -26,7 +26,7 @@ Identifique os participantes ou contexto da reunião antes de redigir:
 
 | Contexto / Stakeholder | Tom de Comunicação Exigido | O que DEVE Conter | O que é PROIBIDO |
 | :--- | :--- | :--- | :--- |
-| **Cliente Corporativo (CSC / Stakeholder Executivo)** | **Estritamente formal e de negócios** (Linguagem não-técnica) | Nomes dos hotéis, números de chamados, impactos operacionais, prazos e datas. | Jargões de TI, IPs, logs de erro brutos, nomes de scripts, variáveis e bancos. |
+| **Atlântica Hotels (CSC / Stakeholder Executivo)** | **Estritamente formal e de negócios** (Linguagem não-técnica) | Nomes dos hotéis, números de chamados, impactos operacionais, prazos e datas. | Jargões de TI, IPs, logs de erro brutos, nomes de scripts, variáveis e bancos. |
 | **Empresa / Startup (Produto & Engenharia)** | **Técnico-executivo** | Arquitetura BFF, endpoints, regras de idempotência, testes e trechos cirúrgicos de código (< 10 linhas). | Descrições vagas ou omissão de causas-raiz técnicas. |
 | **Tríade & Somos1 (Comercial / CRM)** | **Estratégico / Comercial** | Funil de agendamentos, conversão, WhatsApp, termos contratuais e SLAs. | Complexidade desnecessária de infraestrutura. |
 | **RPG (Ordem Paranormal 2)** | **Livro de Regras Oficial** | Tom didático, mecânicas numeradas, demarcação explícita com `<Badge>Oficial</Badge>` ou `<Badge>Homebrew</Badge>`. | Misturar teorias de fãs com regras oficiais sem demarcação. |
@@ -58,7 +58,7 @@ flowchart LR
 ### Passo 1: Triagem do Contexto
 1. Qual é o projeto / cliente? (ex: Empresa / Startup, Atlântica, Tríade, Pessoal).
 2. Quem participou? Há restrições de tom (ex: Stakeholder Executivo)?
-3. Já existe um arquivo sobre o assunto? (Consulte [`ORGANIZATION.md`](file:///./ORGANIZATION.md) ou faça uma busca no repositório).
+3. Já existe um arquivo sobre o assunto? (Consulte [`ORGANIZATION.md`](file:///d:/Desktop/Anotações/ORGANIZATION.md) ou faça uma busca no repositório).
 
 ### Passo 2: Estruturação do Conteúdo
 Extraia da transcrição/ata:
@@ -86,4 +86,4 @@ No arquivo `.mdx` de destino, adicione um item no componente `<Timeline />`:
 Crie links para outros documentos correlatos existentes no repositório (ex: `[Dossiê da Atlântica](../../trabalho/join4/clientes/atlantica/...)`).
 
 ### Passo 5: Registro em Memória
-Adicione uma entrada sintética no [`MEMORY.md`](file:///./MEMORY.md) com a data, documento atualizado e resumo da reunião.
+Adicione uma entrada sintética no [`MEMORY.md`](file:///d:/Desktop/Anotações/MEMORY.md) com a data, documento atualizado e resumo da reunião.
