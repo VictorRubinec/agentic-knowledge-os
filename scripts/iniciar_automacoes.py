@@ -481,7 +481,7 @@ cmd = Chr(34) & "{pyw_bin}" & Chr(34) & " " & Chr(34) & "{script_path}" & Chr(34
 WshShell.Run cmd, 0, False
 Set WshShell = Nothing
 '''
-        vbs_encoding = "cp1252" if sys.platform == "win32" else "utf-8"
+        vbs_encoding = "utf-16" if sys.platform == "win32" else "utf-8"
         if vbs_path:
             vbs_path.parent.mkdir(parents=True, exist_ok=True)
             try:

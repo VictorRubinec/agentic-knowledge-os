@@ -1,0 +1,133 @@
+{
+  "versao": "1.0",
+  "descricao": "Cronograma Editorial de Estudos e Pesquisas Autônomas do Knowledge OS",
+  "pausado": false,
+  "cota_maxima_diaria": 2,
+  "slots_horario": ["08:30", "19:30"],
+  "silenciador_noturno": {
+    "ativo": true,
+    "inicio": "23:00",
+    "fim": "07:00"
+  },
+  "grade_semanal": {
+    "monday": {
+      "dia_nome": "Segunda-feira",
+      "tema_id": "noticias_tech",
+      "tema_titulo": "Notícias Tech & Lançamentos da Indústria",
+      "descricao": "Grandes notícias de tecnologia, lançamentos de ecossistemas, IA e updates de infraestrutura.",
+      "palavras_chave": [
+        "news",
+        "release",
+        "launch",
+        "announcing",
+        "update",
+        "ai",
+        "llm",
+        "google",
+        "meta",
+        "openai",
+        "apple",
+        "linux"
+      ],
+      "ativo": true
+    },
+    "tuesday": {
+      "dia_nome": "Terça-feira",
+      "tema_id": "automacoes",
+      "tema_titulo": "Automações & Pipelines Inteligentes",
+      "descricao": "Automação de processos, pipelines de engenharia, agentes autônomos, webhooks, n8n, crawlers e bots.",
+      "palavras_chave": [
+        "automation",
+        "pipeline",
+        "workflow",
+        "agent",
+        "orchestration",
+        "webhook",
+        "crawler",
+        "scraper",
+        "fastmcp",
+        "mcp"
+      ],
+      "ativo": true
+    },
+    "wednesday": {
+      "dia_nome": "Quarta-feira",
+      "tema_id": "repositorios_famosos",
+      "tema_titulo": "Repositórios Open-Source da Semana (GitHub Trending)",
+      "descricao": "Investigação dos repositórios open-source mais famosos, com maior tração de estrelas e adesão da comunidade.",
+      "palavras_chave": [
+        "trending",
+        "popular",
+        "stars",
+        "github",
+        "framework",
+        "library",
+        "open-source",
+        "tool"
+      ],
+      "ativo": true
+    },
+    "thursday": {
+      "dia_nome": "Quinta-feira",
+      "tema_id": "evolucao_conhecimento",
+      "tema_titulo": "Pesquisa de Evolução de Conhecimento & Engenharia",
+      "descricao": "Fundamentos de computação, arquitetura de software sênior/staff, algoritmos, estruturas de dados, pós-IA e design de sistemas.",
+      "palavras_chave": [
+        "architecture",
+        "internals",
+        "computer-science",
+        "algorithms",
+        "data-structures",
+        "performance",
+        "systems-design",
+        "database-internals",
+        "concurrency"
+      ],
+      "ativo": true
+    },
+    "friday": {
+      "dia_nome": "Sexta-feira",
+      "tema_id": "tendencias_negocios",
+      "tema_titulo": "Tendências de Mercado & Oportunidades de Negócios",
+      "descricao": "Tendências de mercado, SaaS B2B, micro-SaaS, monetização de IA, devtools e produtos digitais escaláveis.",
+      "palavras_chave": [
+        "saas",
+        "b2b",
+        "market-trends",
+        "business",
+        "monetization",
+        "pricing",
+        "devtools",
+        "startup",
+        "product"
+      ],
+      "ativo": true
+    },
+    "saturday": {
+      "dia_nome": "Sábado",
+      "tema_id": "rpg",
+      "tema_titulo": "Sistemas de RPG & Ordem Paranormal",
+      "descricao": "Design de jogos, sistemas de RPG, mecânicas de Ordem Paranormal, Ordem 2, criação de fichas e worldbuilding.",
+      "palavras_chave": [
+        "rpg",
+        "ttrpg",
+        "ordem paranormal",
+        "game-design",
+        "mechanics",
+        "worldbuilding",
+        "rulebook",
+        "dnd",
+        "tormenta20"
+      ],
+      "ativo": true
+    },
+    "sunday": {
+      "dia_nome": "Domingo",
+      "tema_id": "descanso",
+      "tema_titulo": "Pausa / Descanso",
+      "descricao": "Nenhuma entrega agendada. Pausa cognitiva completa para absorção dos estudos da semana.",
+      "palavras_chave": [],
+      "ativo": false
+    }
+  }
+}

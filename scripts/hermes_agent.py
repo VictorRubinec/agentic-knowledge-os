@@ -39,9 +39,30 @@ META_DIR = ROOT_DIR / "00-meta"
 OUTPUT_DIR = ROOT_DIR / "projetos" / "hermes"
 PDF_DIR = OUTPUT_DIR / "pdf"
 QUEUE_FILE = META_DIR / "hermes_tasks.json"
+CRONOGRAMA_FILE = META_DIR / "cronograma_pesquisas.json"
 CONFIG_FILE = SCRIPTS_DIR / "telegram_config.json"
 GERAR_PDF_SCRIPT = SCRIPTS_DIR / "gerar_pdf.py"
 OPTMEM_SCRIPT = SCRIPTS_DIR / "optmem_memo.py"
+
+
+def carregar_cronograma() -> dict:
+    if not CRONOGRAMA_FILE.exists():
+        return {}
+    try:
+        with open(CRONOGRAMA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def salvar_cronograma(cronograma: dict) -> bool:
+    try:
+        with open(CRONOGRAMA_FILE, "w", encoding="utf-8") as f:
+            json.dump(cronograma, f, indent=2, ensure_ascii=False)
+        return True
+    except Exception as e:
+        print(f"[Hermes] Erro ao salvar cronograma: {e}")
+        return False
 
 
 def slugify(text: str) -> str:
@@ -130,7 +151,15 @@ def salvar_fila(data):
     QUEUE_FILE.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def enfileirar_tarefa(titulo: str, prompt: str = "", tipo: str = "pesquisa", prioridade: str = "media"):
+def enfileirar_tarefa(
+    titulo: str,
+    prompt: str = "",
+    tipo: str = "pesquisa",
+    prioridade: str = "media",
+    scheduled_for: str = None,
+    tema_id: str = "",
+    dia_nome: str = ""
+):
     fila = carregar_fila()
     task_id = f"HERMES-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
     nova_tarefa = {
@@ -139,6 +168,9 @@ def enfileirar_tarefa(titulo: str, prompt: str = "", tipo: str = "pesquisa", pri
         "prompt": prompt or titulo,
         "tipo": tipo,
         "prioridade": prioridade,
+        "tema_id": tema_id,
+        "dia_nome": dia_nome,
+        "scheduled_for": scheduled_for,
         "status": "pending",
         "created_at": datetime.datetime.now().isoformat(),
         "started_at": None,
@@ -149,7 +181,9 @@ def enfileirar_tarefa(titulo: str, prompt: str = "", tipo: str = "pesquisa", pri
     }
     fila["tasks"].append(nova_tarefa)
     salvar_fila(fila)
-    print(f"[Hermes] Tarefa enfileirada: {task_id} - '{titulo}' [Prioridade: {prioridade}]")
+    horario_info = f" [Agendado: {scheduled_for}]" if scheduled_for else ""
+    tema_info = f" [{dia_nome} - {tema_id}]" if tema_id else ""
+    print(f"[Hermes] Tarefa enfileirada: {task_id} - '{titulo}'{tema_info}{horario_info}")
     return nova_tarefa
 
 
@@ -160,12 +194,78 @@ def listar_tarefas():
         print("[Hermes] Nenhuma tarefa na fila.")
         return
 
-    print("\n" + "=" * 80)
-    print(f"{'ID':<24} | {'STATUS':<12} | {'PRIORIDADE':<10} | {'TÍTULO'}")
-    print("-" * 80)
+    cronograma = carregar_cronograma()
+    pausa_txt = " [PAUSADO]" if cronograma.get("pausado") else " [ATIVO]"
+
+    print("\n" + "=" * 105)
+    print(f"📋 FILA DE DEMANDAS DO HERMES AUTONOMOUS ENGINE{pausa_txt}")
+    print("=" * 105)
+    print(f"{'ID':<24} | {'STATUS':<12} | {'AGENDADO PARA':<18} | {'TEMA':<15} | {'TÍTULO'}")
+    print("-" * 105)
     for t in tasks:
-        print(f"{t['id']:<24} | {t['status']:<12} | {t.get('prioridade', 'media'):<10} | {t['titulo'][:32]}")
-    print("=" * 80 + "\n")
+        sched = (t.get("scheduled_for") or "Imediato")[:16].replace("T", " ")
+        tema = t.get("tema_id") or t.get("tipo", "geral")
+        print(f"{t['id']:<24} | {t['status']:<12} | {sched:<18} | {tema[:14]:<15} | {t['titulo'][:30]}")
+    print("=" * 105 + "\n")
+
+
+def obter_tarefa_elegivel(tasks: list, cronograma: dict) -> tuple[dict | None, str]:
+    """
+    Avalia a fila de tarefas e retorna a próxima tarefa elegível respeitando:
+      1. Pausa global do cronograma
+      2. Descanso dominical (nenhum envio aos domingos)
+      3. Silenciador noturno (23:00 às 07:00)
+      4. Cota máxima de entregas por dia (padrão: 2)
+      5. Horário agendado (scheduled_for <= datetime.now())
+    """
+    if not cronograma:
+        for t in tasks:
+            if t.get("status") == "pending":
+                return t, "ok_sem_cronograma"
+        return None, "sem_tarefas"
+
+    # 1. Checar se o cronograma está pausado
+    if cronograma.get("pausado", False):
+        return None, "cronograma_pausado"
+
+    agora = datetime.datetime.now()
+
+    # 2. Domingo é dia de descanso completo (sem entregas)
+    if agora.weekday() == 6:
+        return None, "domingo_descanso"
+
+    # 3. Silenciador Noturno (23:00 às 07:00)
+    silenciador = cronograma.get("silenciador_noturno", {})
+    if silenciador.get("ativo", True):
+        hora_atual = agora.hour
+        if hora_atual >= 23 or hora_atual < 7:
+            return None, "silenciador_noturno (23h-07h)"
+
+    # 4. Checar cota máxima diária
+    hoje_str = agora.strftime("%Y-%m-%d")
+    completadas_hoje = [
+        t for t in tasks
+        if t.get("status") == "completed" and (t.get("completed_at") or "").startswith(hoje_str)
+    ]
+    cota = cronograma.get("cota_maxima_diaria", 2)
+    if len(completadas_hoje) >= cota:
+        return None, f"cota_diaria_atingida ({len(completadas_hoje)}/{cota})"
+
+    # 5. Procurar tarefa pendente que já atingiu o horário agendado
+    pendentes = [t for t in tasks if t.get("status") == "pending"]
+    for t in pendentes:
+        sched = t.get("scheduled_for")
+        if not sched:
+            # Tarefa manual avulsa sem agendamento específico: elegível
+            return t, "ok_manual"
+        try:
+            sched_dt = datetime.datetime.fromisoformat(sched)
+            if agora >= sched_dt:
+                return t, f"ok_slot_atingido ({sched})"
+        except Exception:
+            return t, "ok_fallback"
+
+    return None, "aguardando_proximo_horario_de_estudo"
 
 
 def acordar_optmem():
@@ -198,10 +298,118 @@ def memorizar_no_optmem(fato: str):
 # MOTOR ANALÍTICO DO HERMES: GERADOR DE WHITE PAPERS DE ALTA PROFUNDIDADE
 # =============================================================================
 
+def obter_gemini_client():
+    """Inicializa o cliente oficial da Google AI com fallback de chaves de ambiente."""
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(ROOT_DIR / ".env")
+        load_dotenv(ROOT_DIR / "projetos" / "analisador-instagram-telegram" / ".env")
+    except Exception:
+        pass
+    key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not key:
+        return None
+    try:
+        from google import genai
+        return genai.Client(api_key=key)
+    except Exception as e:
+        print(f"      [Hermes AI] Falha ao instanciar genai.Client: {e}")
+        return None
+
+
+def sintetizar_whitepaper_com_gemini(titulo: str, prompt: str, url: str = "", readme_text: str = "") -> str:
+    """
+    Sintetiza um Whitepaper Técnico de Pós-Graduação/Staff Engineer via IA,
+    com foco em aprendizado profundo, arquitetura de sistemas e código prático.
+    """
+    client = obter_gemini_client()
+    if not client:
+        return ""
+
+    contexto_doc = f"Repositório / Fonte Oficial: {url}\n" if url else ""
+    if readme_text:
+        contexto_doc += f"\n--- DOCUMENTAÇÃO CANÔNICA / README DO REPOSITÓRIO ---\n{readme_text[:14000]}\n------------------------------------------------------\n"
+    else:
+        contexto_doc += f"\nDiretriz / Tópico de Pesquisa: {prompt}\n"
+
+    eh_rpg = any(k in f"{titulo} {prompt}".lower() for k in ["rpg", "ordem paranormal", "ordem 2", "sanidade", "grimório"])
+
+    if eh_rpg:
+        system_instruction = """Você é um Game Designer Sênior e Especialista no Sistema Ordem Paranormal e Ordem 2 do Knowledge OS.
+Sua missão é produzir o miolo HTML (<main>) de um Suplemento de Regras / Grimório Técnico Exaustivo para estudos lúdicos de alto nível.
+
+INSTRUÇÕES ESTRITAMENTE OBRIGATÓRIAS:
+1. Retorne APENAS blocos <section>...</section> sem as tags <html>, <head>, <body> ou <main>.
+2. Não use cercas de código markdown (```html). Retorne texto HTML puro.
+3. Seções obrigatórias estruturadas:
+   - Seção 1: Contextualização do Sistema e Fundamentos de Regras (explique a proposta mecânica, compatibilidade oficial vs homebrew com badges visuais, tese lúdica). Use um bloco <div class="callout">.
+   - Seção 2: Fluxo Lúdico e Ciclo de Tomada de Decisão (inclua OBRIGATORIAMENTE um diagrama Mermaid em <pre class="mermaid">flowchart TD ...</pre> com maiúsculas e rótulos entre aspas).
+   - Seção 3: Tabelas de Mecânicas, Sanidade e Degradação (tabela HTML com classes Tailwind detalhando cálculos, danos e custos de PE).
+   - Seção 4: Bloco de Estatísticas ou Exemplo Prático de Ritual/Criatura/Mecânica (com valores numéricos rigorosos, VD, DT, custos de PE, alcance e execução).
+   - Seção 5: Armadilhas de Mestre e Balanceamento (2 a 3 casos de desbalanceamento em mesa e regras de ouro de mitigação).
+   - Seção 6: Conexão com o Gerador de Fichas e Aplicação em Mesa (use <div class="callout-success"> para o parecer técnico final).
+4. Linguagem: Português técnico de alta densidade (pt-BR), formal, imersivo e com rigor matemático de regras."""
+    else:
+        system_instruction = """Você é um Arquiteto de Software Principal (Staff/Principal Engineer) e Pesquisador de IA do Knowledge OS.
+Sua missão é produzir o miolo HTML (<main>) de um Whitepaper Técnico de Pós-Graduação/Engenharia Exaustivo para estudos profundos.
+O leitor é um Engenheiro de Software sênior que quer aprender a fundo os conceitos de computação, arquitetura de sistemas, tradeoffs reais e aplicação prática.
+
+INSTRUÇÕES ESTRITAMENTE OBRIGATÓRIAS:
+1. Retorne APENAS blocos <section>...</section> sem as tags <html>, <head>, <body> ou <main>.
+2. Não use cercas de código markdown (```html). Retorne texto HTML puro.
+3. Seções obrigatórias estruturadas:
+   - Seção 1: Contextualização Técnica, Oportunidade e Fundamentos Teóricos (explique a dor real da indústria, o que o projeto resolve, conceitos de computação envolvidos: concorrência, estruturas de dados, IO, memória, etc.). Use um bloco <div class="callout"> para a tese principal.
+   - Seção 2: Arquitetura em Camadas, Fluxo de Dados e Ciclo de Vida (explique detalhadamente a topologia interna). Inclua OBRIGATORIAMENTE um diagrama Mermaid em <pre class="mermaid">flowchart TD ...</pre>. IMPORTANTE: Em rótulos Mermaid, use maiúsculas e rótulos entre aspas duplas ("Texto"), NUNCA tags HTML (proibido <b>, <i>, <div> dentro de nós mermaid).
+   - Seção 3: Benchmarks, Matriz de Decisão e Trade-offs de Engenharia (inclua uma tabela <table class="w-full text-xs border border-slate-200 rounded-lg overflow-hidden my-4"> com colunas Funcionalidade/Critério, Benchmark/SLA e Impacto de Produção).
+   - Seção 4: Implementação de Referência e Hands-on (Proof-of-Concept executável, com setup, código tipado e comentado, tratamento de exceções e boas práticas).
+   - Seção 5: Armadilhas de Produção, Gotchas e Mitigação de Falhas (2 a 3 edge cases reais de escalabilidade, limites de memória ou consistência, com blocos callout ou listas estilizadas).
+   - Seção 6: Roteiro de Estudos, Aplicação Prática e Conexão Estratégica (exercício prático para o engenheiro testar localmente e sugestão de integração com sistemas corporativos/agênticos). Use <div class="callout-success"> para o parecer técnico final.
+4. Linguagem: Português técnico de altíssima densidade (pt-BR), preciso, formal e sem clichês."""
+
+    modelos = ["gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest"]
+    for m in modelos:
+        try:
+            from google.genai import types
+            print(f"      [Hermes AI] Submetendo síntese de alta profundidade para modelo: {m}...")
+            res = client.models.generate_content(
+                model=m,
+                contents=f"TÍTULO DO WHITEPAPER: {titulo}\n\nCONTEXTO TÉCNICO:\n{contexto_doc}",
+                config=types.GenerateContentConfig(
+                    system_instruction=system_instruction,
+                    temperature=0.2
+                )
+            )
+            if res and res.text:
+                texto = res.text.strip()
+                if texto.startswith("```html"):
+                    texto = texto[7:]
+                if texto.startswith("```"):
+                    texto = texto[3:]
+                if texto.endswith("```"):
+                    texto = texto[:-3]
+                texto = texto.strip()
+                if len(texto) > 400 and "<section" in texto:
+                    print(f"      [Hermes AI] Whitepaper sintetizado com sucesso ({len(texto)} caracteres)")
+                    return texto
+        except Exception as e:
+            print(f"      [Hermes AI] Modelo {m} retornou oscilação ({e}). Testando próximo...")
+    return ""
+
+
 def gerar_conteudo_analitico(tarefa: dict) -> str:
     titulo = tarefa["titulo"]
     slug = slugify(titulo)
     prompt = tarefa.get("prompt", "")
+
+    # Tenta obter URL de repositório presente no título ou prompt
+    url_match = re.search(r"https?://github\.com/[^\s\)\'\"]+", f"{titulo} {prompt}")
+    url = url_match.group(0) if url_match else ""
+    readme_text = baixar_readme_github(url) if url else ""
+
+    # MOTOR 1: SÍNTESE COGNITIVA COM IA (Gemini 3 Flash Preview)
+    conteudo_ia = sintetizar_whitepaper_com_gemini(titulo, prompt, url=url, readme_text=readme_text)
+    if conteudo_ia:
+        return conteudo_ia
 
     # TÓPICO 1: NEON LAKEBASE VS SUPABASE (RAG & VETORIAL)
     if "neon" in slug or "rag" in slug or "supabase" in slug:
@@ -1184,6 +1392,31 @@ pipeline:
 """
 
 
+def sanitizar_mermaid(html: str) -> str:
+    """Corrige nós e arestas com formatação imprópria em diagramas mermaid gerados por LLMs."""
+    def limpar_bloco(match):
+        pre_tag = match.group(1)
+        conteudo = match.group(2)
+        post_tag = match.group(3)
+        linhas = []
+        for linha in conteudo.splitlines():
+            # Converte arestas estilo A -- "LABEL" --> B para A -->|"LABEL"| B
+            l = re.sub(r'--\s*["\']([^"\']+)["\']\s*-->', r'-->|"\1"|', linha)
+            l = re.sub(r'--\s*([A-Za-z0-9_-]+)\s*-->', r'-->|"\1"|', l)
+            # Corrige acidental -->| FOO["BAR"]| para -->|"BAR"|
+            l = re.sub(r'-->\|\s*[A-Za-z0-9_-]+\["([^"]+)"\]\s*\|', r'-->|"\1"|', l)
+            # Corrige nós com aspas puras no início da linha: "NOME" -->
+            l = re.sub(r'^\s*"([A-Za-z0-9_ -]+)"', lambda m: f'    {re.sub(r"[^A-Za-z0-9_]", "_", m.group(1))}["{m.group(1)}"]', l)
+            # Corrige nós com aspas puras após seta: --> "NOME"
+            l = re.sub(r'(-->|-.->|==>)\s*"([A-Za-z0-9_ -]+)"', lambda m: f'{m.group(1)} {re.sub(r"[^A-Za-z0-9_]", "_", m.group(2))}["{m.group(2)}"]', l)
+            # Corrige nós com aspas puras após fechar pipe de label: | "NOME" (garante que não está dentro de |...|)
+            l = re.sub(r'(\|\s*)\s*"([A-Za-z0-9_ -]+)"(?!\s*\|)', lambda m: f'{m.group(1)} {re.sub(r"[^A-Za-z0-9_]", "_", m.group(2))}["{m.group(2)}"]', l)
+            linhas.append(l)
+        return pre_tag + "\n".join(linhas) + post_tag
+
+    return re.sub(r'(<pre class="mermaid[^"]*">)([\s\S]*?)(</pre>)', limpar_bloco, html)
+
+
 def gerar_artefato_html(tarefa: dict) -> Path:
     print("   [2/5] Gerando Dossiê Técnico Exaustivo em HTML5 corporativo...")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -1193,7 +1426,7 @@ def gerar_artefato_html(tarefa: dict) -> Path:
 
     titulo = tarefa["titulo"]
     tipo = tarefa.get("tipo", "Pesquisa").upper()
-    conteudo_corpo = gerar_conteudo_analitico(tarefa)
+    conteudo_corpo = sanitizar_mermaid(gerar_conteudo_analitico(tarefa))
 
     html_content = f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -1261,7 +1494,7 @@ def gerar_artefato_html(tarefa: dict) -> Path:
 </body>
 </html>
 """
-    artifact_path.write_text(html_content, encoding="utf-8")
+    artifact_path.write_text(html_content, encoding="utf-8", newline="\n")
     print(f"         Artefato gerado: {artifact_path.relative_to(ROOT_DIR)}")
     return artifact_path
 
@@ -1321,36 +1554,51 @@ def processar_tarefa(tarefa: dict):
         return False
 
 
-def executar_proxima_tarefa():
+def executar_proxima_tarefa(forcar: bool = False):
+    cronograma = carregar_cronograma()
     fila = carregar_fila()
     tasks = fila.get("tasks", [])
-    proxima = None
-    for t in tasks:
-        if t.get("status") == "pending":
-            proxima = t
-            break
+
+    if forcar:
+        proxima = None
+        for t in tasks:
+            if t.get("status") == "pending":
+                proxima = t
+                break
+        motivo = "forçado_manualmente"
+    else:
+        proxima, motivo = obter_tarefa_elegivel(tasks, cronograma)
 
     if not proxima:
-        print("[Hermes] Nenhuma tarefa pendente na fila.")
+        print(f"[Hermes] Nenhuma tarefa elegível para execução no momento. Motivo: {motivo}")
         return False
 
+    print(f"[Hermes] Executando tarefa elegível: {proxima['id']} (Status: {motivo})")
     sucesso = processar_tarefa(proxima)
     salvar_fila(fila)
     return sucesso
 
 
 def run_worker_loop(interval: int = 30):
-    print(f"[Hermes Worker] Daemon ativado. Monitorando fila (intervalo: {interval}s)... Pressione Ctrl+C para parar.")
+    print(f"[Hermes Worker] Daemon ativado. Monitorando cronograma de estudos e fila (intervalo: {interval}s)...")
+    ultimo_motivo = ""
     try:
         while True:
+            cronograma = carregar_cronograma()
             fila = carregar_fila()
             tasks = fila.get("tasks", [])
-            pendentes = [t for t in tasks if t.get("status") == "pending"]
-            if pendentes:
-                proxima = pendentes[0]
+            proxima, motivo = obter_tarefa_elegivel(tasks, cronograma)
+
+            if proxima:
+                print(f"[Hermes Worker] Disparando entrega agendada: {proxima['id']} ({proxima.get('titulo', '')[:40]})")
                 processar_tarefa(proxima)
                 salvar_fila(fila)
+                ultimo_motivo = ""
             else:
+                if motivo != ultimo_motivo:
+                    hora_fmt = datetime.datetime.now().strftime("%H:%M:%S")
+                    print(f"[Hermes Worker] [{hora_fmt}] Status: {motivo}")
+                    ultimo_motivo = motivo
                 time.sleep(interval)
     except KeyboardInterrupt:
         print("\n[Hermes Worker] Encerrando daemon com segurança.")
@@ -1365,6 +1613,7 @@ def main():
     parser.add_argument("--prioridade", default="media", choices=["baixa", "media", "alta"], help="Prioridade da tarefa")
     parser.add_argument("--list", action="store_true", help="Listar tarefas registradas na fila")
     parser.add_argument("--run-next", action="store_true", help="Processar a próxima tarefa pendente da fila")
+    parser.add_argument("--force", action="store_true", help="Forçar execução imediata ignorando restrições de horário do cronograma")
     parser.add_argument("--worker", action="store_true", help="Executar em modo worker/daemon contínuo")
     parser.add_argument("--interval", type=int, default=30, help="Intervalo de verificação em segundos para o worker")
     parser.add_argument("--topico", help="Criar e processar imediatamente uma pesquisa no estilo Hermes")
@@ -1379,7 +1628,7 @@ def main():
     elif args.list:
         listar_tarefas()
     elif args.run_next:
-        executar_proxima_tarefa()
+        executar_proxima_tarefa(forcar=args.force)
     elif args.worker:
         run_worker_loop(interval=args.interval)
     elif args.topico:

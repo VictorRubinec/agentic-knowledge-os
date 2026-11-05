@@ -45,6 +45,39 @@ SCRIPTS_DIR = ROOT_DIR / "scripts"
 META_DIR = ROOT_DIR / "00-meta"
 QUEUE_FILE = META_DIR / "hermes_tasks.json"
 CACHE_FILE = META_DIR / ".curador_cache.json"
+CRONOGRAMA_FILE = META_DIR / "cronograma_pesquisas.json"
+
+
+def carregar_cronograma() -> dict:
+    if not CRONOGRAMA_FILE.exists():
+        return {}
+    try:
+        with open(CRONOGRAMA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+# Mapeamento oficial dos 6 eixos temáticos por dia da semana
+DIAS_MAPA = {
+    0: "monday",     # Segunda
+    1: "tuesday",    # Terça
+    2: "wednesday",  # Quarta
+    3: "thursday",   # Quinta
+    4: "friday",     # Sexta
+    5: "saturday",   # Sábado
+    6: "sunday"      # Domingo
+}
+
+DIA_NOME_TO_WEEKDAY = {
+    "monday": 0,
+    "tuesday": 1,
+    "wednesday": 2,
+    "thursday": 3,
+    "friday": 4,
+    "saturday": 5,
+    "sunday": 6
+}
 
 # Palavras-chave positivas com pesos de relevância
 PILARES_PESOS = {
@@ -71,7 +104,14 @@ PILARES_PESOS = {
     "fastapi": 20,
     "playwright": 20,
     "postgresql": 20,
-    "postgres": 20
+    "postgres": 20,
+    "saas": 25,
+    "b2b": 25,
+    "devtools": 25,
+    "systems design": 30,
+    "concurrency": 25,
+    "rpg": 30,
+    "ordem paranormal": 35
 }
 
 # Filtro Anti-Slop / Blacklist
@@ -191,30 +231,90 @@ def avaliar_relevancia(item: dict) -> int:
     return min(score, 100)
 
 
-def formular_especificacao_hermes(item: dict) -> dict:
-    """Transforma uma notícia ou repositório bruto em uma diretriz executiva para o Hermes."""
+def classificar_tema(item: dict, cronograma: dict) -> tuple[str, str, str]:
+    """
+    Classifica o item em um dos 6 temas editoriais do cronograma.
+    Retorna: (tema_id, dia_nome, dia_chave)
+    """
+    texto = (item.get("titulo", "") + " " + item.get("raw_text", "")).lower()
+
+    # 1. Sábado: RPG & Ordem Paranormal
+    if any(k in texto for k in ["rpg", "ttrpg", "ordem paranormal", "game design", "ficha", "tormenta"]):
+        return "rpg", "Sábado", "saturday"
+
+    # 2. Terça: Automações & Pipelines
+    if any(k in texto for k in ["automation", "pipeline", "workflow", "n8n", "crawler", "scraper", "webhook", "orchestrat"]):
+        return "automacoes", "Terça-feira", "tuesday"
+
+    # 3. Sexta: Tendências de Mercado & Negócios
+    if any(k in texto for k in ["saas", "b2b", "pricing", "monetiz", "business", "startup", "revenue"]):
+        return "tendencias_negocios", "Sexta-feira", "friday"
+
+    # 4. Quinta: Evolução de Conhecimento & Engenharia
+    if any(k in texto for k in ["architecture", "systems design", "internals", "concurrency", "algorithm", "data structure", "database internal", "pos-ia"]):
+        return "evolucao_conhecimento", "Quinta-feira", "thursday"
+
+    # 5. Quarta: Repositórios Famosos / Trending
+    if "stars" in item.get("engajamento", "") or "github" in item.get("origem", "").lower():
+        return "repositorios_famosos", "Quarta-feira", "wednesday"
+
+    # 6. Segunda: Notícias Tech & Lançamentos da Indústria (Default)
+    return "noticias_tech", "Segunda-feira", "monday"
+
+
+def calcular_proximo_slot(dia_chave: str, cronograma: dict, fila_tasks: list) -> str:
+    """
+    Calcula a data e hora ISO do próximo slot vago (08:30 ou 19:30)
+    correspondente ao dia da semana alvo, garantindo no máximo 2 tarefas por dia.
+    """
+    target_weekday = DIA_NOME_TO_WEEKDAY.get(dia_chave, 0)
+    slots = cronograma.get("slots_horario", ["08:30", "19:30"]) if cronograma else ["08:30", "19:30"]
+
+    agora = datetime.datetime.now()
+    dias_para_frente = (target_weekday - agora.weekday()) % 7
+
+    data_base = (agora + datetime.timedelta(days=dias_para_frente)).date()
+
+    # Coleta todos os slots já ocupados na fila
+    slots_ocupados = set()
+    for t in fila_tasks:
+        sched = t.get("scheduled_for")
+        if sched and t.get("status") in ["pending", "running"]:
+            slots_ocupados.add(sched[:16])  # formato "YYYY-MM-DDTHH:MM"
+
+    # Varre as próximas 4 semanas para encontrar o primeiro slot livre
+    for semana in range(4):
+        dia_alvo = data_base + datetime.timedelta(days=semana * 7)
+        for slot_hora in slots:
+            hora, minuto = map(int, slot_hora.split(":"))
+            dt_slot = datetime.datetime(dia_alvo.year, dia_alvo.month, dia_alvo.day, hora, minuto, 0)
+
+            # Se for hoje e o horário já passou, não aloca
+            if dt_slot <= agora:
+                continue
+
+            iso_key = dt_slot.strftime("%Y-%m-%dT%H:%M")
+            if iso_key not in slots_ocupados:
+                return dt_slot.isoformat()
+
+    # Fallback se lotado: aloca 4 semanas à frente
+    dia_fb = data_base + datetime.timedelta(days=28)
+    return datetime.datetime(dia_fb.year, dia_fb.month, dia_fb.day, 8, 30, 0).isoformat()
+
+
+def formular_especificacao_hermes(item: dict, cronograma: dict, fila_tasks: list) -> dict:
+    """Transforma uma descoberta em especificação executiva do Hermes com agendamento editorial."""
     titulo_raw = item["titulo"]
     url = item["url"]
 
-    # Limpar título e categorizar
+    # Limpar título e classificar
     titulo_limpo = re.sub(r"^(Show HN:|Ask HN:|GitHub - )", "", titulo_raw).strip()
-    slug = slugify(titulo_limpo)
-
-    if any(k in slug for k in ["neon", "postgres", "vector", "rag", "database"]):
-        tipo = "pesquisa"
-        categoria = "Bancos de Dados & Cargas Vetoriais"
-    elif any(k in slug for k in ["sec", "k8s", "kubernetes", "gate", "aikido", "audit"]):
-        tipo = "auditoria"
-        categoria = "DevSecOps & Infraestrutura"
-    elif any(k in slug for k in ["agent", "mcp", "unipds", "model", "routing"]):
-        tipo = "sintese"
-        categoria = "Engenharia de Software com IA"
-    else:
-        tipo = "relatorio"
-        categoria = "Arquitetura de Sistemas & SaaS"
+    tema_id, dia_nome, dia_chave = classificar_tema(item, cronograma)
+    scheduled_for = calcular_proximo_slot(dia_chave, cronograma, fila_tasks)
 
     prompt_pesquisa = (
         f"Investigação aprofundada baseada na descoberta: '{titulo_limpo}' (Fonte: {url}). "
+        f"Eixo Temático: {dia_nome} — {tema_id}. "
         f"Mapear a arquitetura técnica de referência, comparar benchmarks quantitativos de latência e custo, "
         f"apresentar implementação mínima viável executável, identificar edge cases e falhas ocultas em produção, "
         f"e estruturar plano prático de aplicação no ecossistema Knowledge OS."
@@ -225,9 +325,11 @@ def formular_especificacao_hermes(item: dict) -> dict:
     return {
         "titulo": f"Análise Técnica: {titulo_limpo[:70]}",
         "prompt": prompt_pesquisa,
-        "tipo": tipo,
-        "categoria": categoria,
+        "tipo": "pesquisa",
         "prioridade": prioridade,
+        "tema_id": tema_id,
+        "dia_nome": dia_nome,
+        "scheduled_for": scheduled_for,
         "score": item["score"],
         "url_origem": url,
         "engajamento": item.get("engajamento", "")
@@ -306,23 +408,28 @@ def executar_varredura(auto_enqueue: bool = False, limit: int = 3):
         return []
 
     if auto_enqueue:
-        print(f"🚀 Enfileirando automaticamente os top {len(selecionados)} temas no Hermes:")
-        from hermes_agent import enfileirar_tarefa
+        print(f"🚀 Enfileirando temas com agendamento editorial no Hermes:")
+        from hermes_agent import enfileirar_tarefa, carregar_fila
+        cronograma = carregar_cronograma()
 
         for sel in selecionados:
-            spec = formular_especificacao_hermes(sel)
+            fila_atual = carregar_fila().get("tasks", [])
+            spec = formular_especificacao_hermes(sel, cronograma, fila_atual)
             enfileirar_tarefa(
                 titulo=spec["titulo"],
                 prompt=spec["prompt"],
                 tipo=spec["tipo"],
-                prioridade=spec["prioridade"]
+                prioridade=spec["prioridade"],
+                scheduled_for=spec["scheduled_for"],
+                tema_id=spec["tema_id"],
+                dia_nome=spec["dia_nome"]
             )
             cache.setdefault("processed_urls", []).append(sel["url"])
             cache.setdefault("processed_titles", []).append(sel["titulo"])
 
         salvar_cache(cache)
-        print("\n✨ Tarefas enfileiradas com sucesso na fila oficial do Hermes!")
-        print("Execute 'python scripts/hermes_agent.py --list' para auditar a fila.\n")
+        print("\n✨ Tarefas agendadas com sucesso no calendário editorial do Hermes!")
+        print("Execute 'python scripts/hermes_agent.py --list' para auditar a grade semanal.\n")
 
     return selecionados
 
