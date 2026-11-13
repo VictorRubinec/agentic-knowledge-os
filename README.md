@@ -40,38 +40,52 @@ O **Agentic Knowledge OS** resolve esses problemas transformando o repositório 
 
 ```mermaid
 flowchart TD
-    subgraph INPUT["Camada de Entrada (Pair Programming)"]
-        A["Engenheiro / Desenvolvedor"] <-->|"Prompts e Discussões"| B["Agente de IA<br/>(Antigravity / Cursor / Claude)"]
+    subgraph INPUT["1. Camada de Entrada"]
+        direction TB
+        A["Engenheiro / Desenvolvedor"]
+        B["Agente de IA Autônomo<br/>(Antigravity / Cursor / Claude)"]
+        A <-->|"Prompts & Discussões"| B
     end
 
-    subgraph HARNESS["Governança e Disciplina (Harness)"]
-        B <--> C["AGENTS.md<br/>Regras Mestre e Anti-Distorção"]
-        B <--> D[".agents/skills/<br/>20 Habilidades Operacionais"]
-        B <--> M["MEMORY.md / OptMem<br/>Seek Direto O(1) (~426 tokens)"]
+    subgraph HARNESS["2. Governança e Disciplina"]
+        direction TB
+        C["AGENTS.md<br/>Diretrizes Anti-Alucinação"]
+        D[".agents/skills/<br/>Catálogo de 20 Skills Homologadas"]
+        M["MEMORY.md / OptMem<br/>Memória Contínua O(1) (~426 tokens)"]
+        C --- D --- M
     end
 
-    subgraph ENGINE["Motor de Compilação e Qualidade"]
-        E["Artefatos HTML5 Standalone<br/>(Tailwind, Badges, Callouts)"]
-        F["scripts/gerar_pdf.py<br/>Playwright Chromium Engine"]
+    subgraph ENGINE["3. Motor de Execução e Qualidade"]
+        direction TB
         G["scripts/knowledge_os_mcp.py<br/>Servidor MCP Nativo (Stdio)"]
-        K["scripts/verificar_repo.py<br/>5 Portões de Qualidade"]
+        E["Artefatos HTML5 Standalone<br/>Tailwind CSS & Componentes"]
+        F["scripts/gerar_pdf.py<br/>Motor Playwright Chromium"]
+        K["scripts/verificar_repo.py<br/>Esteira de 5 Portões de Qualidade"]
+        G --> E --> F --> K
     end
 
-    subgraph OUTPUT["Entregáveis Corporativos"]
-        H["PDFs A4 Editoriais<br/>(Capa, Sem Órfãos, Print Ready)"]
+    subgraph OUTPUT["4. Entregáveis Corporativos"]
+        direction TB
+        H["PDFs A4 Editoriais<br/>Capa Executiva e Anti-Órfãos"]
         I["ORGANIZATION.md<br/>Catálogo Vivo Auto-Regenerável"]
+        H --- I
     end
 
-    INPUT --> HARNESS
-    HARNESS --> ENGINE
-    ENGINE --> OUTPUT
+    INPUT ==>|"Contrato de Governança"| HARNESS
+    HARNESS ==>|"Execução & Scaffolding"| ENGINE
+    ENGINE ==>|"Compilação & Validação"| OUTPUT
 
     style A fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#fff
     style B fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#fff
     style C fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#fff
-    style F fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
+    style D fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#fff
+    style M fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#fff
     style G fill:#0f172a,stroke:#06b6d4,stroke-width:2px,color:#fff
+    style E fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style F fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
+    style K fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
     style H fill:#0f172a,stroke:#ec4899,stroke-width:2px,color:#fff
+    style I fill:#0f172a,stroke:#ec4899,stroke-width:2px,color:#fff
 ```
 
 ---
